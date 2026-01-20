@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - SGSI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
+        }
+
+        .login-card {
+            width: 400px;
+            margin: auto;
+        }
+
+        .brand-logo {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="width: 100%;">
+        <div class="brand-logo">🛡️ SecureManager</div>
+        <div class="card login-card">
+            <h2 style="text-align: center;">Crear Cuenta</h2>
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div
+                style="background-color: var(--warning-color); padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem; color: white;">
+                {% for message in messages %}
+                {{ message }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" name="name" required placeholder="Ej. Juan Pérez">
+                </div>
+                <div class="form-group">
+                    <label>Usuario</label>
+                    <input type="text" name="username" required placeholder="Ej. jperez">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" name="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirmar Contraseña</label>
+                    <input type="password" name="password_confirm" id="password_confirm" required>
+                </div>
+                <button type="submit" style="width: 100%;">Registrarse</button>
+            </form>
+            <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem;">
+                <a href="/login" style="color: var(--accent-color);">¿Ya tienes cuenta? Iniciar Sesión</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,12 +1,24 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import os
 import json
 import csv
+from functools import wraps
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask import send_file
 from core.sim import simular_incidente, cargar_kpis, reiniciar_kpis
 from models.risk_model import Riesgo
 
 app = Flask(__name__)
+app.secret_key = 'super_secret_key_change_this_for_production' # Necesario para sesiones
+
+# Decorador para requerir login
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Helper to load/save JSON
 def load_json(path):
@@ -19,11 +31,71 @@ def save_json(path, data):
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        password_confirm = request.form['password_confirm']
+        name = request.form['name']
+        
+        # Check if passwords match
+        if password != password_confirm:
+            flash('Las contraseñas no coinciden')
+            return redirect(url_for('register'))
+        
+        users = load_json("data/users.json")
+        
+        # Check if user exists
+        for u in users:
+            if u['username'] == username:
+                flash('El usuario ya existe')
+                return redirect(url_for('register'))
+        
+        # Create new user
+        new_user = {
+            "username": username,
+            "password_hash": generate_password_hash(password),
+            "name": name
+        }
+        users.append(new_user)
+        save_json("data/users.json", users)
+        
+        flash('Registro exitoso. Por favor inicia sesión.')
+        return redirect(url_for('login'))
+        
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        users = load_json("data/users.json")
+        user = next((u for u in users if u['username'] == username), None)
+        
+        if user and check_password_hash(user['password_hash'], password):
+            session['user_id'] = user['username']
+            session['user_name'] = user['name']
+            return redirect(url_for('index'))
+        
+        flash('Usuario o contraseña incorrectos')
+            
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
 @app.route('/')
+@login_required
 def index():
     return render_template('index.html')
 
 @app.route("/activos", methods=["GET", "POST"])
+@login_required
 def activos():
     path = "data/risk_register.json"
     if request.method == "POST":
@@ -47,6 +119,7 @@ def activos():
 
 
 @app.route("/amenazas", methods=["GET", "POST"])
+@login_required
 def amenazas():
     path = "data/threats.json"
     if request.method == "POST":
@@ -70,6 +143,7 @@ def amenazas():
 
 
 @app.route("/evaluar", methods=["GET", "POST"])
+@login_required
 def evaluar():
     riesgos_path = "data/riesgos.json"
     
@@ -108,6 +182,7 @@ def evaluar():
 
 
 @app.route("/tratamiento", methods=["GET"])
+@login_required
 def tratamiento():
     riesgos_data = load_json("data/riesgos.json")
     # Pass index to allow editing specific items
@@ -116,6 +191,7 @@ def tratamiento():
     return render_template("tratamiento.html", riesgos=riesgos_data)
 
 @app.route("/tratamiento/guardar", methods=["POST"])
+@login_required
 def guardar_tratamiento():
     riesgos_path = "data/riesgos.json"
     riesgos_data = load_json(riesgos_path)
@@ -146,6 +222,7 @@ def guardar_tratamiento():
     return redirect(url_for("tratamiento"))
 
 @app.route("/exportar_csv")
+@login_required
 def exportar_csv():
     filename = "riesgos_exportados.csv"
     riesgos_data = load_json("data/riesgos.json")
@@ -172,21 +249,25 @@ def exportar_csv():
 
 
 @app.route("/kpis")
+@login_required
 def kpis():
     data = cargar_kpis()
     return render_template("kpis.html", mttd=data["mttd"], mttr=data["mttr"], incidentes=data["incidentes"])
 
 @app.route("/simular_incidente", methods=["POST"])
+@login_required
 def simular():
     simular_incidente()
     return redirect("/kpis")
 
 @app.route("/reiniciar_kpis", methods=["POST"])
+@login_required
 def reiniciar():
     reiniciar_kpis()
     return redirect("/kpis")
 
 @app.route("/reporte")
+@login_required
 def reporte():
     riesgos_data = load_json("data/riesgos.json")
     return render_template("reporte.html", registro=riesgos_data)
