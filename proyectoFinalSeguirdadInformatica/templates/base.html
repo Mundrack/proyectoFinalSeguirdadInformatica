@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGSI - Gestión de Riesgos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js for Dashboards -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="brand">
+            🛡️ SecureManager
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="{{ 'active' if request.path == '/' else '' }}">📊 Dashboard</a></li>
+            <li><a href="/activos" class="{{ 'active' if request.path == '/activos' else '' }}">💻 Activos</a></li>
+            <li><a href="/amenazas" class="{{ 'active' if request.path == '/amenazas' else '' }}">⚠️ Amenazas</a></li>
+            <li><a href="/evaluar" class="{{ 'active' if request.path == '/evaluar' else '' }}">🔍 Evaluar Riesgo</a></li>
+            <li><a href="/tratamiento" class="{{ 'active' if request.path == '/tratamiento' else '' }}">🛡️ Tratamiento</a></li>
+            <li><a href="/kpis" class="{{ 'active' if request.path == '/kpis' else '' }}">📈 KPIs & Simulación</a></li>
+            <li><a href="/reporte" class="{{ 'active' if request.path == '/reporte' else '' }}">📑 Reportes</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>{% block header %}Bienvenido{% endblock %}</h1>
+            <p style="color: var(--text-muted);">{% block subheader %}Gestión de Seguridad de la Información{% endblock %}</p>
+        </header>
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

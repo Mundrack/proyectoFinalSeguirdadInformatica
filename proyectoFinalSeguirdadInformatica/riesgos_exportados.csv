@@ -1,0 +1,6 @@
+Activo,Amenaza,Vulnerabilidad,Nivel Inherente,Estrategia,Control ISO,Nivel Residual,Responsable
+Servidor BD,Phishing,,Muy Bajo,,,,
+Servidor BD,Phishing,,Muy Bajo,,,,
+Servidor BD,Phishing,,Muy Bajo,,,,
+Laptop del Gerente,Robo físico del dispositivo,,Alto,,,,
+BD de Radical,malware mp1,Fue un ataque en cadena,Muy Alto,Mitigar,ISO 27701,Muy Alto,MATEO PUGA

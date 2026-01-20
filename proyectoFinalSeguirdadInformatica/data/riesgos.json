@@ -1,0 +1,68 @@
+[
+  {
+    "activo": "Servidor BD",
+    "amenaza": "Phishing",
+    "probabilidad": 1,
+    "impacto": 1,
+    "puntaje": 1,
+    "nivel": "Muy Bajo"
+  },
+  {
+    "activo": "Servidor BD",
+    "amenaza": "Phishing",
+    "probabilidad": 1,
+    "impacto": 1,
+    "puntaje": 1,
+    "nivel": "Muy Bajo"
+  },
+  {
+    "activo": "Servidor BD",
+    "amenaza": "Phishing",
+    "probabilidad": 2,
+    "impacto": 2,
+    "puntaje": 4,
+    "nivel": "Muy Bajo"
+  },
+  {
+    "activo": "Laptop del Gerente",
+    "amenaza": "Robo f\u00edsico del dispositivo",
+    "probabilidad": 3,
+    "impacto": 5,
+    "puntaje": 15,
+    "nivel": "Alto"
+  },
+  {
+    "activo": "BD de Radical",
+    "amenaza": "malware mp1",
+    "vulnerabilidad": "Fue un ataque en cadena",
+    "controles_existentes": "Ninguno",
+    "probabilidad": 5,
+    "impacto": 5,
+    "puntaje": 25,
+    "nivel": "Muy Alto",
+    "tratamiento_estrategia": "Mitigar",
+    "control_iso": "ISO 27701",
+    "responsable": "MATEO PUGA",
+    "probabilidad_residual": 2,
+    "impacto_residual": 5,
+    "puntaje_residual": 10,
+    "nivel_residual": "Medio"
+  },
+  {
+    "activo": "Laptod Mateo",
+    "amenaza": "Robo f\u00edsico del dispositivo",
+    "vulnerabilidad": "Se robaron la laptop del guagua",
+    "controles_existentes": "Bloqueo del sistema mediante aplicaciones de seguridad.",
+    "probabilidad": 3,
+    "impacto": 1,
+    "puntaje": 3,
+    "nivel": "Muy Bajo",
+    "tratamiento_estrategia": "",
+    "control_iso": "",
+    "responsable": "",
+    "probabilidad_residual": 0,
+    "impacto_residual": 0,
+    "puntaje_residual": 0,
+    "nivel_residual": ""
+  }
+]

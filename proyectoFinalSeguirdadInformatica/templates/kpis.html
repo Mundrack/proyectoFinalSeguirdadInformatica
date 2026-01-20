@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block header %}Monitorización y KPIs{% endblock %}
+{% block subheader %}Simulación de métricas de desempeño del SGSI{% endblock %}
+
+{% block content %}
+<div class="grid-3">
+  <div class="card hero-stat">
+    <h3>{{ "%.1f"|format(mttd) }} h</h3>
+    <p>MTTD (Detección)</p>
+  </div>
+  <div class="card hero-stat">
+    <h3>{{ "%.1f"|format(mttr) }} h</h3>
+    <p>MTTR (Respuesta)</p>
+  </div>
+  <div class="card hero-stat">
+    <h3 style="color: {{ 'var(--danger-color)' if incidentes > 0 else 'var(--success-color)' }}">{{ incidentes }}</h3>
+    <p>Incidentes este mes</p>
+  </div>
+</div>
+
+<div class="grid-3" style="grid-template-columns: 2fr 1fr;">
+  <div class="card">
+    <h2>Tendencia de Métricas</h2>
+    <canvas id="kpiChart"></canvas>
+  </div>
+
+  <div class="card">
+    <h2>⚡ Control de Simulación</h2>
+    <p style="margin-bottom: 1rem; color: var(--text-muted);">Simule el paso del tiempo o la ocurrencia de incidentes
+      para ver cómo degradan los KPIs si no se gestionan.</p>
+
+    <form action="/simular_incidente" method="POST" style="margin-bottom: 1rem;">
+      <button type="submit" style="width: 100%; background-color: var(--warning-color);">⚠️ Simular Incidente</button>
+    </form>
+
+    <form action="/reiniciar_kpis" method="POST">
+      <button type="submit" style="width: 100%; background-color: var(--secondary-color);">🔄 Reiniciar
+        Métricas</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const ctx = document.getElementById('kpiChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['MTTD (Horas)', 'MTTR (Horas)', 'Incidentes'],
+      datasets: [{
+        label: 'Estado Actual',
+        data: [{{ mttd }}, {{ mttr }}, {{ incidentes }}],
+    backgroundColor: [
+    'rgba(59, 130, 246, 0.5)',
+    'rgba(16, 185, 129, 0.5)',
+    'rgba(239, 68, 68, 0.5)'
+  ],
+    borderColor: [
+    'rgb(59, 130, 246)',
+    'rgb(16, 185, 129)',
+    'rgb(239, 68, 68)'
+  ],
+    borderWidth: 1
+            }]
+        },
+    options: {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+    });
+</script>
+{% endblock %}

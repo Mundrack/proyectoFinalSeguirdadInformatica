@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block header %}Dashboard General{% endblock %}
+{% block subheader %}Vista general de la postura de seguridad{% endblock %}
+
+{% block content %}
+<div class="grid-3">
+    <div class="card hero-stat">
+        <h3>5</h3>
+        <p>Activos Críticos</p>
+    </div>
+    <div class="card hero-stat">
+        <h3>3</h3>
+        <p>Riesgos Altos</p>
+    </div>
+    <div class="card hero-stat">
+        <h3>85%</h3>
+        <p>Cumplimiento ISO</p>
+    </div>
+</div>
+
+<div class="card">
+    <h2>🎯 Acciones Rápidas</h2>
+    <div style="display: flex; gap: 1rem;">
+        <a href="/activos"><button>+ Nuevo Activo</button></a>
+        <a href="/evaluar"><button>+ Evaluar Riesgo</button></a>
+        <a href="/reporte"><button style="background-color: var(--secondary-color);">Ver Reporte</button></a>
+    </div>
+</div>
+{% endblock %}

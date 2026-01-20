@@ -1,0 +1,17 @@
+[
+  {
+    "nombre": "Phishing",
+    "tipo": "Interna",
+    "activo": "Servidor BD"
+  },
+  {
+    "nombre": "Robo f\u00edsico del dispositivo",
+    "tipo": "Externa",
+    "activo": "Laptop del Gerente"
+  },
+  {
+    "nombre": "malware mp1",
+    "tipo": "Externa",
+    "activo": "BD de Radical"
+  }
+]

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block header %}Gestión de Activos{% endblock %}
+{% block subheader %}Registre los recursos críticos de la organización{% endblock %}
+
+{% block content %}
+<div class="grid-3" style="grid-template-columns: 1fr 2fr;">
+  <!-- Form Card -->
+  <div class="card">
+    <h2>📝 Nuevo Activo</h2>
+    <form method="POST">
+      <div class="form-group">
+        <label>Nombre del Activo</label>
+        <input type="text" name="nombre" placeholder="Ej. Servidor DB, Laptop RRHH..." required>
+      </div>
+
+      <div class="form-group">
+        <label>Categoría</label>
+        <select name="categoria">
+          <option value="Hardware">Hardware</option>
+          <option value="Software">Software</option>
+          <option value="Datos">Datos</option>
+          <option value="Servicio">Servicio</option>
+          <option value="Personal">Personal</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Confidencialidad (1-5)</label>
+        <input type="number" name="confidencialidad" min="1" max="5" value="3" required>
+      </div>
+
+      <div class="form-group">
+        <label>Integridad (1-5)</label>
+        <input type="number" name="integridad" min="1" max="5" value="3" required>
+      </div>
+
+      <div class="form-group">
+        <label>Disponibilidad (1-5)</label>
+        <input type="number" name="disponibilidad" min="1" max="5" value="3" required>
+      </div>
+
+      <button type="submit" style="width: 100%;">Registrar Activo</button>
+    </form>
+  </div>
+
+  <!-- Info/List Card could go here, but currently logic doesn't pass the list to this view on GET. 
+         We will just show a placeholder or registered message area if needed via Flash messages, 
+         but for now let's keep it clean. -->
+  <div class="card">
+    <h2>ℹ️ Guía de Valoración</h2>
+    <p style="margin-bottom: 1rem;">Utilice la escala del 1 al 5 para valorar cada dimensión:</p>
+    <ul style="padding-left: 1.5rem; color: var(--text-muted); line-height: 1.6;">
+      <li><strong>1 - Bajo:</strong> Información pública o sin impacto.</li>
+      <li><strong>3 - Medio:</strong> Uso interno, impacto moderado.</li>
+      <li><strong>5 - Crítico:</strong> Información sensible, secreto industrial o interrupción crítica.</li>
+    </ul>
+    <br>
+    <div class="badge badge-medium">Criticidad = C + I + D</div>
+  </div>
+</div>
+{% endblock %}

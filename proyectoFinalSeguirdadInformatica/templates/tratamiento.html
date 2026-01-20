@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block header %}Tratamiento de Riesgos{% endblock %}
+{% block subheader %}Defina estrategias y calcule el riesgo residual{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div
+    style="margin-bottom: 1rem; padding: 1rem; background-color: #f8fafc; border-left: 4px solid var(--accent-color); border-radius: 4px;">
+    <p><strong>ℹ️ Nota:</strong> El <em>Nivel Actual</em> (Izquierda) nunca cambia, representa el riesgo bruto. Al
+      aplicar controles, observe cómo cambia el <em>Nivel Residual</em> (Derecha).</p>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Riesgo (Activo/Amenaza)</th>
+        <th>Nivel Actual (Inherente)</th>
+        <th>Estrategia & Control</th>
+        <th>Responsable</th>
+        <th>Cálculo Residual</th>
+        <th>Resultado</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in riesgos %}
+      <form action="{{ url_for('guardar_tratamiento') }}" method="POST">
+        <input type="hidden" name="risk_id" value="{{ r.id }}">
+        <tr>
+          <!-- Riesgo Info -->
+          <td>
+            <strong>{{ r.activo }}</strong><br>
+            <small style="color: var(--text-muted);">{{ r.amenaza }}</small>
+          </td>
+
+          <!-- Nivel Actual (Inherente) - NO CAMBIA -->
+          <td>
+            <span
+              class="badge badge-{{ 'critical' if r.nivel == 'Muy Alto' else 'high' if r.nivel == 'Alto' else 'medium' if r.nivel == 'Medio' else 'low' }}">
+              {{ r.nivel }} ({{ r.puntaje }})
+            </span>
+          </td>
+
+          <!-- Inputs de Estrategia -->
+          <td>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <select name="estrategia" style="width: 100%;">
+                <option value="Mitigar" {{ 'selected' if r.tratamiento_estrategia=='Mitigar' }}>Mitigar</option>
+                <option value="Aceptar" {{ 'selected' if r.tratamiento_estrategia=='Aceptar' }}>Aceptar</option>
+                <option value="Transferir" {{ 'selected' if r.tratamiento_estrategia=='Transferir' }}>Transferir
+                </option>
+                <option value="Evitar" {{ 'selected' if r.tratamiento_estrategia=='Evitar' }}>Evitar</option>
+              </select>
+              <input type="text" name="control" placeholder="Control ISO (Ej. A.5.1)" value="{{ r.control_iso }}"
+                required>
+            </div>
+          </td>
+
+          <td>
+            <input type="text" name="responsable" placeholder="Responsable" value="{{ r.responsable }}" required>
+          </td>
+
+          <!-- Inputs Residuales -->
+          <td>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <div>
+                <label style="font-size: 0.75rem;">Prob.</label>
+                <input type="number" name="probabilidad_residual"
+                  value="{{ r.probabilidad_residual or r.probabilidad }}" min="1" max="5" style="width: 50px;">
+              </div>
+              <div>
+                <label style="font-size: 0.75rem;">Imp.</label>
+                <input type="number" name="impacto_residual" value="{{ r.impacto_residual or r.impacto }}" min="1"
+                  max="5" style="width: 50px;">
+              </div>
+            </div>
+          </td>
+
+          <!-- Resultado Visual (Badge Residual) -->
+          <td>
+            {% if r.nivel_residual %}
+            <span
+              class="badge badge-{{ 'critical' if r.nivel_residual == 'Muy Alto' else 'high' if r.nivel_residual == 'Alto' else 'medium' if r.nivel_residual == 'Medio' else 'low' }}">
+              {{ r.nivel_residual }} ({{ r.puntaje_residual }})
+            </span>
+            {% else %}
+            <small style="color: var(--text-muted);">Pendiente</small>
+            {% endif %}
+          </td>
+
+          <td>
+            <button type="submit" style="padding: 0.5rem 1rem;">Guardar</button>
+          </td>
+        </tr>
+      </form>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

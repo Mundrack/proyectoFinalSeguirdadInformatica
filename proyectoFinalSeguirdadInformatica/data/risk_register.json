@@ -1,0 +1,27 @@
+[
+  {
+    "nombre": "Servidor BD",
+    "categoria": "Hardware",
+    "criticidad": 14
+  },
+  {
+    "nombre": "ejemplo",
+    "categoria": "Software",
+    "criticidad": 9
+  },
+  {
+    "nombre": "Laptop del Gerente",
+    "categoria": "Hardware",
+    "criticidad": 15
+  },
+  {
+    "nombre": "BD de Radical",
+    "categoria": "Datos",
+    "criticidad": 10
+  },
+  {
+    "nombre": "Laptod Mateo",
+    "categoria": "Hardware",
+    "criticidad": 9
+  }
+]

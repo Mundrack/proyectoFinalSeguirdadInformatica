@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block header %}¡Operación Exitosa!{% endblock %}
+{% block subheader %}El registro se ha guardado correctamente{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align: center; padding: 3rem;">
+    <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+    <h2 style="margin-bottom: 2rem;">{{ message }}</h2>
+
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+        {% if primary_action %}
+        <a href="{{ primary_action_url }}"><button>{{ primary_action }}</button></a>
+        {% endif %}
+
+        <a href="/"><button style="background-color: var(--secondary-color);">Volver al Dashboard</button></a>
+    </div>
+</div>
+{% endblock %}

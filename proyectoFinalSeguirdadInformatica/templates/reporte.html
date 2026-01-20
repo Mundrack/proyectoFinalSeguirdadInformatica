@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block header %}Reporte General{% endblock %}
+{% block subheader %}Vista consolidada para auditoría{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <h2>Matriz de Riesgos y Controles</h2>
+    <a href="/exportar_csv"><button>Descargar CSV</button></a>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table style="font-size: 0.9rem;">
+      <thead>
+        <tr>
+          <th>Activo</th>
+          <th>Amenaza</th>
+          <th>Vulnerabilidad</th>
+          <th>Riesgo Inherente</th>
+          <th>Estrategia</th>
+          <th>Control (ISO/IEC 27002)</th>
+          <th>Responsable</th>
+          <th>Riesgo Residual</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in registro %}
+        <tr>
+          <td>{{ r.activo }}</td>
+          <td>{{ r.amenaza }}</td>
+          <td>{{ r.vulnerabilidad }}</td>
+          <td>
+            <span
+              class="badge badge-{{ 'critical' if r.nivel == 'Muy Alto' else 'high' if r.nivel == 'Alto' else 'medium' if r.nivel == 'Medio' else 'low' }}">
+              {{ r.nivel }}
+            </span>
+          </td>
+          <td>{{ r.tratamiento_estrategia }}</td>
+          <td>{{ r.control_iso }}</td>
+          <td>{{ r.responsable }}</td>
+          <td>
+            {% if r.nivel_residual %}
+            <span
+              class="badge badge-{{ 'critical' if r.nivel_residual == 'Muy Alto' else 'high' if r.nivel_residual == 'Alto' else 'medium' if r.nivel_residual == 'Medio' else 'low' }}">
+              {{ r.nivel_residual }} ({{ r.puntaje_residual }})
+            </span>
+            {% else %}
+            -
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

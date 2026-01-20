@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block header %}Evaluación de Riesgos{% endblock %}
+{% block subheader %}Identifique y valore los riesgos inherentes{% endblock %}
+
+{% block content %}
+<div class="card">
+  <form method="POST">
+    <div class="form-group">
+      <label>1. Seleccionar Activo</label>
+      <select name="activo" required>
+        {% for a in activos %}
+        <option value="{{ a.nombre }}">{{ a.nombre }} (Criticidad: {{ a.criticidad }})</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>2. Seleccionar Amenaza</label>
+      <select name="amenaza" required>
+        {% for t in amenazas %}
+        <option value="{{ t.nombre }}">{{ t.nombre }} ({{ t.tipo }})</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>3. Vulnerabilidad (Debilidad explotada)</label>
+      <textarea name="vulnerabilidad" rows="2" placeholder="Ej. Falta de parches, configuración por defecto..."
+        required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>4. Controles Existentes</label>
+      <textarea name="controles" rows="2" placeholder="Ej. Antivirus básico, Firewall perimetral..."></textarea>
+    </div>
+
+    <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div>
+        <label>Probabilidad (1-5)</label>
+        <input type="number" name="probabilidad" min="1" max="5" required>
+      </div>
+      <div>
+        <label>Impacto (1-5)</label>
+        <input type="number" name="impacto" min="1" max="5" required>
+      </div>
+    </div>
+
+    <button type="submit">Evaluar Riesgo</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Riesgos Evaluados</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Activo</th>
+        <th>Amenaza</th>
+        <th>Probabilidad</th>
+        <th>Impacto</th>
+        <th>Nivel</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in riesgos %}
+      <tr>
+        <td>{{ r.activo }}</td>
+        <td>{{ r.amenaza }}</td>
+        <td>{{ r.probabilidad }}</td>
+        <td>{{ r.impacto }}</td>
+        <td><span
+            class="badge badge-{{ 'critical' if r.nivel == 'Muy Alto' else 'high' if r.nivel == 'Alto' else 'medium' if r.nivel == 'Medio' else 'low' }}">{{
+            r.nivel }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
