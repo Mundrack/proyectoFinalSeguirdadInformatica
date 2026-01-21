@@ -23,13 +23,19 @@ def login_required(f):
 # Helper to load/save JSON
 def load_json(path):
     if os.path.exists(path):
-        with open(path, "r") as f:
-            return json.load(f)
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                content = f.read().strip()
+                if not content:
+                    return []
+                return json.loads(content)
+        except (json.JSONDecodeError, ValueError):
+            return []
     return []
 
 def save_json(path, data):
-    with open(path, "w") as f:
-        json.dump(data, f, indent=2)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

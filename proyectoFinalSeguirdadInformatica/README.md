@@ -39,7 +39,7 @@
 
 ## 👥 Roles
 - **Empresario**: Crea la empresa, recibe un ID único y gestiona a los empleados.
-- **Empleado**: Se une usando el ID de la empresa y espera aprobación del empresario.
+- **Empleado**: Se unirá usando el ID de la empresa y esperará aprobación del empresario.
 
 ---
 © 2026 Proyecto Final de Seguridad Informática
