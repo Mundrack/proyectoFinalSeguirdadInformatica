@@ -188,12 +188,30 @@ tr:hover {
     border-radius: 9999px;
     font-size: 0.875rem;
     font-weight: 600;
+    display: inline-block;
 }
 
-.badge-low { background-color: #d1fae5; color: #065f46; }
-.badge-medium { background-color: #fef3c7; color: #92400e; }
-.badge-high { background-color: #fee2e2; color: #b91c1c; }
-.badge-critical { background-color: #7f1d1d; color: #fecaca; }
+.badge-low { 
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0); 
+    color: #065f46; 
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+.badge-medium { 
+    background: linear-gradient(135deg, #fef3c7, #fde68a); 
+    color: #92400e; 
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+}
+.badge-high { 
+    background: linear-gradient(135deg, #fecaca, #fca5a5); 
+    color: #991b1b; 
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+.badge-critical { 
+    background: linear-gradient(135deg, #991b1b, #7f1d1d); 
+    color: #fecaca; 
+    box-shadow: 0 2px 4px rgba(127, 29, 29, 0.5);
+}
+
 
 .grid-3 {
     display: grid;

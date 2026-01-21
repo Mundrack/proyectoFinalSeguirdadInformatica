@@ -12,6 +12,10 @@ class Riesgo:
     puntaje: int = 1
     nivel: str = "Bajo"
     
+    # Fechas para KPIs MERC-PD
+    fecha_identificacion: str = ""
+    fecha_tratamiento: str = ""
+    
     # Tratamiento
     tratamiento_estrategia: str = ""  # Mitigar, Transferir, Aceptar, Evitar
     control_iso: str = ""
@@ -22,13 +26,30 @@ class Riesgo:
     impacto_residual: int = 0
     puntaje_residual: int = 0
     nivel_residual: str = ""
+    
+    # Soporte Multi-tenant
+    empresa_id: str = "GLOBAL"
 
     def calcular_nivel(self, puntaje: int) -> str:
-        if puntaje <= 4: return "Muy Bajo"
-        if puntaje <= 8: return "Bajo"
-        if puntaje <= 14: return "Medio"
-        if puntaje <= 20: return "Alto"
-        return "Muy Alto"
+        """
+        Calcula el nivel de riesgo según la matriz MERC-PD.
+        
+        Matriz de Riesgo (Probabilidad × Impacto):
+        - Bajo: puntaje <= 4
+        - Medio: puntaje 5-9
+        - Alto: puntaje 10-14
+        - Crítico: puntaje >= 15
+        
+        Basado en: Metodología MERC-PD, Matriz de Riesgo (Mapa de Calor)
+        """
+        if puntaje <= 4:
+            return "Bajo"
+        elif puntaje <= 9:
+            return "Medio"
+        elif puntaje <= 14:
+            return "Alto"
+        else:  # puntaje >= 15
+            return "Crítico"
 
     def evaluar_riesgo_inherente(self):
         self.puntaje = self.probabilidad * self.impacto

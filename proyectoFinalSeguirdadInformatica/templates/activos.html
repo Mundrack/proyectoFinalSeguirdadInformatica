@@ -10,6 +10,12 @@
     <h2>📝 Nuevo Activo</h2>
     <form method="POST">
       <div class="form-group">
+        <label>ID Manual</label>
+        <input type="text" name="id_manual" placeholder="Ej. ACT-001, SRV-BD-01..." required>
+        <small style="color: var(--text-muted);">Identificador personalizado del activo</small>
+      </div>
+
+      <div class="form-group">
         <label>Nombre del Activo</label>
         <input type="text" name="nombre" placeholder="Ej. Servidor DB, Laptop RRHH..." required>
       </div>
@@ -17,11 +23,10 @@
       <div class="form-group">
         <label>Categoría</label>
         <select name="categoria">
-          <option value="Hardware">Hardware</option>
-          <option value="Software">Software</option>
           <option value="Datos">Datos</option>
-          <option value="Servicio">Servicio</option>
-          <option value="Personal">Personal</option>
+          <option value="Infraestructura">Infraestructura</option>
+          <option value="Software">Software</option>
+          <option value="Personas">Personas</option>
         </select>
       </div>
 
@@ -40,15 +45,18 @@
         <input type="number" name="disponibilidad" min="1" max="5" value="3" required>
       </div>
 
+      <div class="form-group">
+        <label>Responsable</label>
+        <input type="text" name="responsable" placeholder="Ej. Gerente de TI, Administrador de Sistemas..." required>
+      </div>
+
       <button type="submit" style="width: 100%;">Registrar Activo</button>
     </form>
   </div>
 
-  <!-- Info/List Card could go here, but currently logic doesn't pass the list to this view on GET. 
-         We will just show a placeholder or registered message area if needed via Flash messages, 
-         but for now let's keep it clean. -->
+  <!-- Info Card -->
   <div class="card">
-    <h2>ℹ️ Guía de Valoración</h2>
+    <h2>ℹ️ Guía de Valoración CIA</h2>
     <p style="margin-bottom: 1rem;">Utilice la escala del 1 al 5 para valorar cada dimensión:</p>
     <ul style="padding-left: 1.5rem; color: var(--text-muted); line-height: 1.6;">
       <li><strong>1 - Bajo:</strong> Información pública o sin impacto.</li>
@@ -57,6 +65,139 @@
     </ul>
     <br>
     <div class="badge badge-medium">Criticidad = C + I + D</div>
+    <hr style="margin: 1.5rem 0; opacity: 0.2;">
+    <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">Categorías MERC-PD</h3>
+    <ul style="padding-left: 1.5rem; color: var(--text-muted); line-height: 1.6; font-size: 0.9rem;">
+      <li><strong>Datos:</strong> BD clientes, empleados, propiedad intelectual</li>
+      <li><strong>Infraestructura:</strong> Servidores, redes, equipos terminales, IoT</li>
+      <li><strong>Software:</strong> Apps in-house, sistemas operativos, SaaS</li>
+      <li><strong>Personas:</strong> Usuarios internos, administradores, proveedores</li>
+    </ul>
   </div>
 </div>
+
+<!-- Tabla de Activos Registrados -->
+{% if activos %}
+<div class="card" style="margin-top: 1.5rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+    <h2 style="margin: 0;">📋 Activos Registrados</h2>
+    <div style="display: flex; gap: 0.75rem; align-items: center;">
+      <!-- Search Bar -->
+      <input type="text" id="searchActivos" placeholder="🔍 Buscar por nombre o ID..."
+        style="width: 250px; padding: 0.5rem; font-size: 0.9rem;">
+
+      <!-- Filter by Category -->
+      <select id="filterCategoria" style="padding: 0.5rem; font-size: 0.9rem;">
+        <option value="">Todas las categorías</option>
+        <option value="Datos">Datos</option>
+        <option value="Infraestructura">Infraestructura</option>
+        <option value="Software">Software</option>
+        <option value="Personas">Personas</option>
+      </select>
+
+      <!-- Filter by Criticality -->
+      <select id="filterCriticidad" style="padding: 0.5rem; font-size: 0.9rem;">
+        <option value="">Todas las criticidades</option>
+        <option value="critical">Crítico (12-15)</option>
+        <option value="high">Alto (9-11)</option>
+        <option value="medium">Medio (6-8)</option>
+        <option value="low">Bajo (3-5)</option>
+      </select>
+    </div>
+  </div>
+
+  <table id="activosTable">
+    <thead>
+      <tr>
+        <th>ID Auto</th>
+        <th>ID Manual</th>
+        <th>Nombre</th>
+        <th>Categoría</th>
+        <th style="text-align: center;">C</th>
+        <th style="text-align: center;">I</th>
+        <th style="text-align: center;">D</th>
+        <th style="text-align: center;">Criticidad Total</th>
+        <th>Responsable</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for activo in activos %}
+      <tr data-nombre="{{ activo.nombre|lower }}" data-id-manual="{{ activo.id_manual|lower }}"
+        data-categoria="{{ activo.categoria }}"
+        data-criticidad-nivel="{% if activo.criticidad >= 12 %}critical{% elif activo.criticidad >= 9 %}high{% elif activo.criticidad >= 6 %}medium{% else %}low{% endif %}">
+        <td><strong>{{ activo.id_auto }}</strong></td>
+        <td><code
+            style="background: rgba(0,0,0,0.05); padding: 0.2rem 0.5rem; border-radius: 4px;">{{ activo.id_manual }}</code>
+        </td>
+        <td>{{ activo.nombre }}</td>
+        <td><span class="badge badge-low">{{ activo.categoria }}</span></td>
+        <td style="text-align: center;">{{ activo.confidencialidad }}</td>
+        <td style="text-align: center;">{{ activo.integridad }}</td>
+        <td style="text-align: center;">{{ activo.disponibilidad }}</td>
+        <td style="text-align: center;">
+          <span
+            class="badge badge-{% if activo.criticidad >= 12 %}critical{% elif activo.criticidad >= 9 %}high{% elif activo.criticidad >= 6 %}medium{% else %}low{% endif %}">
+            {{ activo.criticidad }}
+          </span>
+        </td>
+        <td>{{ activo.responsable }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div id="noResults" style="display: none; text-align: center; padding: 2rem; color: var(--text-muted);">
+    <p style="font-size: 1.1rem;">🔍 No se encontraron activos con esos criterios</p>
+  </div>
+</div>
+
+<script>
+  // Real-time search and filter for assets
+  const searchInput = document.getElementById('searchActivos');
+  const filterCategoria = document.getElementById('filterCategoria');
+  const filterCriticidad = document.getElementById('filterCriticidad');
+  const tableRows = document.querySelectorAll('#activosTable tbody tr');
+  const noResults = document.getElementById('noResults');
+  const table = document.getElementById('activosTable');
+
+  function filterTable() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const categoriaFilter = filterCategoria.value;
+    const criticidadFilter = filterCriticidad.value;
+
+    let visibleCount = 0;
+
+    tableRows.forEach(row => {
+      const nombre = row.dataset.nombre;
+      const idManual = row.dataset.idManual;
+      const categoria = row.dataset.categoria;
+      const criticidad = row.dataset.criticidadNivel;
+
+      const matchesSearch = nombre.includes(searchTerm) || idManual.includes(searchTerm);
+      const matchesCategoria = !categoriaFilter || categoria === categoriaFilter;
+      const matchesCriticidad = !criticidadFilter || criticidad === criticidadFilter;
+
+      if (matchesSearch && matchesCategoria && matchesCriticidad) {
+        row.style.display = '';
+        visibleCount++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    // Show/hide no results message
+    if (visibleCount === 0) {
+      table.style.display = 'none';
+      noResults.style.display = 'block';
+    } else {
+      table.style.display = 'table';
+      noResults.style.display = 'none';
+    }
+  }
+
+  searchInput?.addEventListener('input', filterTable);
+  filterCategoria?.addEventListener('change', filterTable);
+  filterCriticidad?.addEventListener('change', filterTable);
+</script>
+{% endif %}
 {% endblock %}

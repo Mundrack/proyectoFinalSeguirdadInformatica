@@ -5,7 +5,7 @@ import csv
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import send_file
-from core.sim import simular_incidente, cargar_kpis, reiniciar_kpis
+from core.kpis_merc_pd import obtener_resumen_dashboard, guardar_datos_incidentes, guardar_datos_capacitacion
 from models.risk_model import Riesgo
 
 app = Flask(__name__)
@@ -38,30 +38,60 @@ def register():
         password = request.form['password']
         password_confirm = request.form['password_confirm']
         name = request.form['name']
+        role = request.form['role']
         
-        # Check if passwords match
         if password != password_confirm:
             flash('Las contraseñas no coinciden')
             return redirect(url_for('register'))
         
         users = load_json("data/users.json")
+        empresas = load_json("data/empresas.json")
         
-        # Check if user exists
         for u in users:
             if u['username'] == username:
                 flash('El usuario ya existe')
                 return redirect(url_for('register'))
         
+        empresa_id = None
+        
+        if role == 'empresario':
+            company_name = request.form.get('company_name')
+            # Generate a simple ID for the company
+            import uuid
+            empresa_id = str(uuid.uuid4())[:8].upper()
+            new_empresa = {
+                "id": empresa_id,
+                "nombre": company_name,
+                "fundador": username
+            }
+            empresas.append(new_empresa)
+            save_json("data/empresas.json", empresas)
+        else:
+            # For employee, check if company exists
+            empresa_id = request.form.get('company_id').upper()
+            empresa_existe = False
+            for emp in empresas:
+                if emp['id'] == empresa_id:
+                    empresa_existe = True
+                    break
+            
+            if not empresa_existe:
+                flash(f'La empresa con ID {empresa_id} no existe')
+                return redirect(url_for('register'))
+
         # Create new user
         new_user = {
             "username": username,
             "password_hash": generate_password_hash(password),
-            "name": name
+            "name": name,
+            "role": role,
+            "empresa_id": empresa_id,
+            "status": "activo" if role == "empresario" else "pendiente" # Empresario is active by default
         }
         users.append(new_user)
         save_json("data/users.json", users)
         
-        flash('Registro exitoso. Por favor inicia sesión.')
+        flash(f'Registro exitoso. Tu ID de empresa es: {empresa_id}' if role == 'empresario' else 'Registro exitoso.')
         return redirect(url_for('login'))
         
     return render_template('register.html')
@@ -78,6 +108,8 @@ def login():
         if user and check_password_hash(user['password_hash'], password):
             session['user_id'] = user['username']
             session['user_name'] = user['name']
+            session['role'] = user.get('role', 'empresario')
+            session['empresa_id'] = user.get('empresa_id', 'GLOBAL')
             return redirect(url_for('index'))
         
         flash('Usuario o contraseña incorrectos')
@@ -92,42 +124,149 @@ def logout():
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html')
+    user_empresa = session.get('empresa_id')
+    users = load_json("data/users.json")
+    user = next((u for u in users if u['username'] == session['user_id']), None)
+    
+    if user and user.get('status') == 'pendiente':
+        return render_template('pending.html')
+    
+    # Calcular estadísticas dinámicas
+    activos_data = load_json("data/risk_register.json")
+    riesgos_data = load_json("data/riesgos.json")
+    
+    # Filtrar por empresa
+    mis_activos = [a for a in activos_data if a.get('empresa_id') == user_empresa]
+    mis_riesgos = [r for r in riesgos_data if r.get('empresa_id') == user_empresa]
+    
+    stats = {
+        'total_activos': len(mis_activos),
+        'total_riesgos': len(mis_riesgos),
+        'activos_criticos': len([a for a in mis_activos if a.get('criticidad', 0) >= 12]),
+        'riesgos_altos': len([r for r in mis_riesgos if r.get('puntaje', 0) >= 10]),
+        'riesgos_mitigados': len([r for r in mis_riesgos if r.get('tratamiento_estrategia')]),
+        'cumplimiento': 0
+    }
+    
+    if len(mis_riesgos) > 0:
+        stats['cumplimiento'] = round((stats['riesgos_mitigados'] / len(mis_riesgos)) * 100)
+
+    return render_template('index.html', stats=stats)
+
+@app.route('/empresa')
+@login_required
+def empresa():
+    user_empresa_id = session.get('empresa_id')
+    empresas = load_json("data/empresas.json")
+    empresa = next((e for e in empresas if e['id'] == user_empresa_id), {"nombre": "N/A", "id": user_empresa_id, "fundador": "N/A"})
+    
+    all_users = load_json("data/users.json")
+    miembros = [u for u in all_users if u.get('empresa_id') == user_empresa_id]
+    
+    return render_template('empresa.html', empresa=empresa, miembros=miembros)
+
+@app.route('/empresa/miembros/aprobar', methods=['POST'])
+@login_required
+def aprobar_miembro():
+    if session.get('role') != 'empresario':
+        flash('No tienes permiso para esta acción')
+        return redirect(url_for('empresa'))
+        
+    username_to_approve = request.form.get('username')
+    users = load_json("data/users.json")
+    
+    for u in users:
+        if u['username'] == username_to_approve and u.get('empresa_id') == session.get('empresa_id'):
+            u['status'] = 'activo'
+            break
+            
+    save_json("data/users.json", users)
+    flash(f'Usuario {username_to_approve} aprobado')
+    return redirect(url_for('empresa'))
+
+@app.route('/empresa/miembros/eliminar', methods=['POST'])
+@login_required
+def eliminar_miembro():
+    if session.get('role') != 'empresario':
+        flash('No tienes permiso para esta acción')
+        return redirect(url_for('empresa'))
+        
+    username_to_delete = request.form.get('username')
+    if username_to_delete == session.get('user_id'):
+        flash('No puedes eliminarte a ti mismo')
+        return redirect(url_for('empresa'))
+        
+    users = load_json("data/users.json")
+    new_users = [u for u in users if not (u['username'] == username_to_delete and u.get('empresa_id') == session.get('empresa_id'))]
+    
+    save_json("data/users.json", new_users)
+    flash(f'Usuario {username_to_delete} eliminado')
+    return redirect(url_for('empresa'))
 
 @app.route("/activos", methods=["GET", "POST"])
 @login_required
 def activos():
     path = "data/risk_register.json"
+    user_empresa = session.get('empresa_id', 'GLOBAL')
+    
     if request.method == "POST":
         nombre = request.form["nombre"]
         categoria = request.form["categoria"]
         c = int(request.form["confidencialidad"])
         i = int(request.form["integridad"])
         d = int(request.form["disponibilidad"])
+        responsable = request.form["responsable"]
+        id_manual = request.form["id_manual"]
         criticidad = c + i + d
-
-        data = {"nombre": nombre, "categoria": categoria, "criticidad": criticidad}
+        
+        # Generar ID automático (scoped by company)
         registros = load_json(path)
+        empresa_registros = [r for r in registros if r.get('empresa_id') == user_empresa]
+        id_auto = len(empresa_registros) + 1
+
+        data = {
+            "id_auto": id_auto,
+            "id_manual": id_manual,
+            "nombre": nombre, 
+            "categoria": categoria,
+            "confidencialidad": c,
+            "integridad": i,
+            "disponibilidad": d,
+            "criticidad": criticidad,
+            "responsable": responsable,
+            "empresa_id": user_empresa # Save company ID
+        }
         registros.append(data)
         save_json(path, registros)
 
         return render_template("success.html", 
-                             message=f"Activo '{nombre}' registrado con éxito.",
+                             message=f"Activo '{nombre}' registrado con éxito (ID: {id_auto}).",
                              primary_action="Registrar Otro Activo",
                              primary_action_url="/activos")
-    return render_template("activos.html")
+    
+    # GET request - mostrar solo activos de la empresa actual
+    all_activos = load_json(path)
+    mis_activos = [a for a in all_activos if a.get('empresa_id') == user_empresa]
+    return render_template("activos.html", activos=mis_activos)
 
 
 @app.route("/amenazas", methods=["GET", "POST"])
 @login_required
 def amenazas():
     path = "data/threats.json"
+    user_empresa = session.get('empresa_id', 'GLOBAL')
+    
     if request.method == "POST":
         nombre = request.form["nombre"]
         tipo = request.form["tipo"]
         activo = request.form["activo"]
 
-        amenaza = {"nombre": nombre, "tipo": tipo, "activo": activo}
+        amenaza = {
+            "nombre": nombre, 
+            "tipo": tipo, 
+            "activo": activo,
+            "empresa_id": user_empresa
+        }
         amenazas = load_json(path)
         amenazas.append(amenaza)
         save_json(path, amenazas)
@@ -137,15 +276,21 @@ def amenazas():
                              primary_action="Registrar Otra Amenaza",
                              primary_action_url="/amenazas")
 
-    activos = load_json("data/risk_register.json")
-    amenazas = load_json(path)
-    return render_template("amenazas.html", amenazas=amenazas, activos=activos)
+    # Filter assets and threats by company
+    all_activos = load_json("data/risk_register.json")
+    mis_activos = [a for a in all_activos if a.get('empresa_id') == user_empresa]
+    
+    all_amenazas = load_json(path)
+    mis_amenazas = [t for t in all_amenazas if t.get('empresa_id') == user_empresa]
+    
+    return render_template("amenazas.html", amenazas=mis_amenazas, activos=mis_activos)
 
 
 @app.route("/evaluar", methods=["GET", "POST"])
 @login_required
 def evaluar():
     riesgos_path = "data/riesgos.json"
+    user_empresa = session.get('empresa_id', 'GLOBAL')
     
     if request.method == "POST":
         # Capture form data
@@ -155,40 +300,65 @@ def evaluar():
         controles = request.form.get("controles", "Ninguno")
         probabilidad = int(request.form["probabilidad"])
         impacto = int(request.form["impacto"])
+        
+        # Capturar fecha de identificación automáticamente
+        from datetime import datetime
+        fecha_actual = datetime.now().strftime("%Y-%m-%d")
 
-        # Create Risk Object
+        # Create Risk Object with company isolation
         riesgo = Riesgo(
             activo=activo,
             amenaza=amenaza,
             vulnerabilidad=vulnerabilidad,
             controles_existentes=controles,
             probabilidad=probabilidad,
-            impacto=impacto
+            impacto=impacto,
+            fecha_identificacion=fecha_actual,
+            empresa_id=user_empresa
         )
         riesgo.evaluar_riesgo_inherente()
 
-        # Save
+        # Save to database
         riesgos_data = load_json(riesgos_path)
         riesgos_data.append(riesgo.to_dict())
         save_json(riesgos_path, riesgos_data)
+        
+        return render_template("success.html", 
+                             message="Evaluación de riesgo completada.",
+                             primary_action="Evaluar Otro Riesgo",
+                             primary_action_url="/evaluar")
 
-    activos = load_json("data/risk_register.json")
-    amenazas = load_json("data/threats.json")
-    riesgos_data = load_json(riesgos_path)
+    # Filter by company for display
+    all_activos = load_json("data/risk_register.json")
+    mis_activos = [a for a in all_activos if a.get('empresa_id') == user_empresa]
     
-    # Convert dicts back to objects for display if needed, or pass dicts
-    # Passing dicts is fine for Jinja
-    return render_template("evaluar.html", activos=activos, amenazas=amenazas, riesgos=riesgos_data)
+    all_amenazas = load_json("data/threats.json")
+    mis_amenazas = [t for t in all_amenazas if t.get('empresa_id') == user_empresa]
+    
+    all_riesgos = load_json(riesgos_path)
+    mis_riesgos = [r for r in all_riesgos if r.get('empresa_id') == user_empresa]
+    
+    return render_template("evaluar.html", activos=mis_activos, amenazas=mis_amenazas, riesgos=mis_riesgos)
 
 
 @app.route("/tratamiento", methods=["GET"])
 @login_required
 def tratamiento():
-    riesgos_data = load_json("data/riesgos.json")
-    # Pass index to allow editing specific items
-    for idx, r in enumerate(riesgos_data):
-        r["id"] = idx
-    return render_template("tratamiento.html", riesgos=riesgos_data)
+    user_empresa = session.get('empresa_id', 'GLOBAL')
+    all_riesgos = load_json("data/riesgos.json")
+    # Filter risks by company
+    mis_riesgos = [r for r in all_riesgos if r.get('empresa_id') == user_empresa]
+    
+    # Pass index of original list to allow editing
+    # Actually, we need to find the absolute index in all_riesgos for saving
+    for r in mis_riesgos:
+        # Find index in all_riesgos
+        for idx, orig in enumerate(all_riesgos):
+            if orig == r:
+                r["id"] = idx
+                break
+                
+    return render_template("tratamiento.html", riesgos=mis_riesgos)
 
 @app.route("/tratamiento/guardar", methods=["POST"])
 @login_required
@@ -197,22 +367,37 @@ def guardar_tratamiento():
     riesgos_data = load_json(riesgos_path)
     
     risk_id = int(request.form["risk_id"])
-    estrategia = request.form["estrategia"]
+    
+    # Get multiple strategies from checkboxes (returns list)
+    estrategias_list = request.form.getlist("estrategia")
+    estrategia = ", ".join(estrategias_list) if estrategias_list else "Sin estrategia"
+    
     control = request.form["control"]
     responsable = request.form["responsable"]
     
     # Probability/Impact Residual might be same or lower
     prob_res = int(request.form["probabilidad_residual"])
     imp_res = int(request.form["impacto_residual"])
+    
+    # Capturar fecha de tratamiento
+    from datetime import datetime
+    fecha_tratamiento = datetime.now().strftime("%Y-%m-%d")
+
 
     if 0 <= risk_id < len(riesgos_data):
         # Rehydrate object
         riesgo = Riesgo.from_dict(riesgos_data[risk_id])
         
+        # Verificar pertenencia para seguridad
+        if riesgo.empresa_id != session.get('empresa_id', 'GLOBAL'):
+            flash('Acceso denegado a este riesgo')
+            return redirect(url_for("tratamiento"))
+        
         # Apply treatment
         riesgo.tratamiento_estrategia = estrategia
         riesgo.control_iso = control
         riesgo.responsable = responsable
+        riesgo.fecha_tratamiento = fecha_tratamiento
         riesgo.evaluar_riesgo_residual(prob_res, imp_res)
         
         # Save back
@@ -224,11 +409,13 @@ def guardar_tratamiento():
 @app.route("/exportar_csv")
 @login_required
 def exportar_csv():
-    filename = "riesgos_exportados.csv"
-    riesgos_data = load_json("data/riesgos.json")
+    user_empresa = session.get('empresa_id', 'GLOBAL')
+    filename = f"riesgos_{user_empresa}.csv"
+    all_riesgos = load_json("data/riesgos.json")
+    mis_riesgos_data = [r for r in all_riesgos if r.get('empresa_id') == user_empresa]
     
     # Convert to objects for easy access
-    riesgos = [Riesgo.from_dict(r) for r in riesgos_data]
+    riesgos = [Riesgo.from_dict(r) for r in mis_riesgos_data]
 
     with open(filename, "w", newline="", encoding='utf-8') as f:
         writer = csv.writer(f)
@@ -251,26 +438,39 @@ def exportar_csv():
 @app.route("/kpis")
 @login_required
 def kpis():
-    data = cargar_kpis()
-    return render_template("kpis.html", mttd=data["mttd"], mttr=data["mttr"], incidentes=data["incidentes"])
+    """Dashboard de KPIs MERC-PD con datos reales (Filtrados por empresa)"""
+    user_empresa = session.get('empresa_id', 'GLOBAL')
+    data = obtener_resumen_dashboard(empresa_id=user_empresa)
+    return render_template("kpis.html", **data)
 
-@app.route("/simular_incidente", methods=["POST"])
+@app.route("/kpis/incidentes", methods=["POST"])
 @login_required
-def simular():
-    simular_incidente()
+def guardar_kpis_incidentes():
+    """Guardar datos de incidentes ingresados manualmente (Filtrado por empresa)"""
+    user_empresa = session.get('empresa_id', 'GLOBAL')
+    reportados = int(request.form["incidentes_reportados"])
+    prevenidos = int(request.form["incidentes_prevenidos"])
+    guardar_datos_incidentes(reportados, prevenidos, empresa_id=user_empresa)
     return redirect("/kpis")
 
-@app.route("/reiniciar_kpis", methods=["POST"])
+@app.route("/kpis/capacitacion", methods=["POST"])
 @login_required
-def reiniciar():
-    reiniciar_kpis()
+def guardar_kpis_capacitacion():
+    """Guardar datos de capacitación ingresados manualmente (Filtrado por empresa)"""
+    user_empresa = session.get('empresa_id', 'GLOBAL')
+    total = int(request.form["total_empleados"])
+    capacitados = int(request.form["empleados_capacitados"])
+    guardar_datos_capacitacion(total, capacitados, empresa_id=user_empresa)
     return redirect("/kpis")
+
 
 @app.route("/reporte")
 @login_required
 def reporte():
-    riesgos_data = load_json("data/riesgos.json")
-    return render_template("reporte.html", registro=riesgos_data)
+    user_empresa = session.get('empresa_id', 'GLOBAL')
+    all_riesgos = load_json("data/riesgos.json")
+    mis_riesgos = [r for r in all_riesgos if r.get('empresa_id') == user_empresa]
+    return render_template("reporte.html", registro=mis_riesgos)
 
 
 if __name__ == '__main__':

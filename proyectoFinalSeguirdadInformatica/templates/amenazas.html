@@ -16,9 +16,9 @@
       <div class="form-group">
         <label>Tipo</label>
         <select name="tipo">
-          <option value="Externa">Externa (Ataque, Desastre)</option>
-          <option value="Interna">Interna (Error, Sabotaje)</option>
-          <option value="Técnica">Técnica (Fallo HW/SW)</option>
+          <option value="Cibercrimen">Cibercrimen</option>
+          <option value="Errores Humanos">Errores Humanos</option>
+          <option value="Físicas">Físicas</option>
         </select>
       </div>
 
@@ -36,9 +36,21 @@
   </div>
 
   <div class="card">
-    <h2>Amenazas Registradas</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="margin: 0;">Amenazas Registradas</h2>
+      <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <input type="text" id="searchAmenazas" placeholder="🔍 Buscar amenaza..."
+          style="width: 220px; padding: 0.5rem; font-size: 0.9rem;">
+        <select id="filterTipo" style="padding: 0.5rem; font-size: 0.9rem;">
+          <option value="">Todos los tipos</option>
+          <option value="Cibercrimen">Cibercrimen</option>
+          <option value="Errores Humanos">Errores Humanos</option>
+          <option value="Físicas">Físicas</option>
+        </select>
+      </div>
+    </div>
     {% if amenazas %}
-    <table>
+    <table id="amenazasTable">
       <thead>
         <tr>
           <th>Amenaza</th>
@@ -48,7 +60,7 @@
       </thead>
       <tbody>
         {% for t in amenazas %}
-        <tr>
+        <tr data-nombre="{{ t.nombre|lower }}" data-tipo="{{ t.tipo }}">
           <td>{{ t.nombre }}</td>
           <td><span class="badge badge-{{ 'low' if t.tipo == 'Interna' else 'high' }}">{{ t.tipo }}</span></td>
           <td>{{ t.activo }}</td>
@@ -56,9 +68,56 @@
         {% endfor %}
       </tbody>
     </table>
+    <div id="noResultsAmenazas" style="display: none; text-align: center; padding: 2rem; color: var(--text-muted);">
+      <p style="font-size: 1.1rem;">🔍 No se encontraron amenazas con esos criterios</p>
+    </div>
     {% else %}
     <p style="color: var(--text-muted); text-align: center; padding: 2rem;">No hay amenazas registradas aún.</p>
     {% endif %}
   </div>
 </div>
+
+<script>
+  // Real-time search and filter for threats
+  const searchAmenazas = document.getElementById('searchAmenazas');
+  const filterTipo = document.getElementById('filterTipo');
+  const amenazasRows = document.querySelectorAll('#amenazasTable tbody tr');
+  const noResultsAmenazas = document.getElementById('noResultsAmenazas');
+  const amenazasTable = document.getElementById('amenazasTable');
+
+  function filterAmenazas() {
+    if (!amenazasRows || amenazasRows.length === 0) return;
+
+    const searchTerm = searchAmenazas.value.toLowerCase();
+    const tipoFilter = filterTipo.value;
+
+    let visibleCount = 0;
+
+    amenazasRows.forEach(row => {
+      const nombre = row.dataset.nombre;
+      const tipo = row.dataset.tipo;
+
+      const matchesSearch = nombre.includes(searchTerm);
+      const matchesTipo = !tipoFilter || tipo === tipoFilter;
+
+      if (matchesSearch && matchesTipo) {
+        row.style.display = '';
+        visibleCount++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    if (visibleCount === 0) {
+      amenazasTable.style.display = 'none';
+      noResultsAmenazas.style.display = 'block';
+    } else {
+      amenazasTable.style.display = 'table';
+      noResultsAmenazas.style.display = 'none';
+    }
+  }
+
+  searchAmenazas?.addEventListener('input', filterAmenazas);
+  filterTipo?.addEventListener('change', filterAmenazas);
+</script>
 {% endblock %}

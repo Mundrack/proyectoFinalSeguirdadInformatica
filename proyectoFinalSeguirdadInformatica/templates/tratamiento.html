@@ -45,13 +45,31 @@
           <!-- Inputs de Estrategia -->
           <td>
             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-              <select name="estrategia" style="width: 100%;">
-                <option value="Mitigar" {{ 'selected' if r.tratamiento_estrategia=='Mitigar' }}>Mitigar</option>
-                <option value="Aceptar" {{ 'selected' if r.tratamiento_estrategia=='Aceptar' }}>Aceptar</option>
-                <option value="Transferir" {{ 'selected' if r.tratamiento_estrategia=='Transferir' }}>Transferir
-                </option>
-                <option value="Evitar" {{ 'selected' if r.tratamiento_estrategia=='Evitar' }}>Evitar</option>
-              </select>
+              <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem; color: var(--text-main);">
+                Estrategias MERC-PD:</div>
+              <div
+                style="display: flex; flex-direction: column; gap: 0.3rem; padding: 0.5rem; background: #f8fafc; border-radius: 6px;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+                  <input type="checkbox" name="estrategia" value="Mitigar" {{ 'checked' if r.tratamiento_estrategia
+                    and 'Mitigar' in r.tratamiento_estrategia }}>
+                  <span>🛡️ Mitigar (Reducir)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+                  <input type="checkbox" name="estrategia" value="Transferir" {{ 'checked' if r.tratamiento_estrategia
+                    and 'Transferir' in r.tratamiento_estrategia }}>
+                  <span>🤝 Transferir (Compartir)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+                  <input type="checkbox" name="estrategia" value="Evitar" {{ 'checked' if r.tratamiento_estrategia
+                    and 'Evitar' in r.tratamiento_estrategia }}>
+                  <span>🚫 Evitar (Eliminar)</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; cursor: pointer;">
+                  <input type="checkbox" name="estrategia" value="Aceptar" {{ 'checked' if r.tratamiento_estrategia
+                    and 'Aceptar' in r.tratamiento_estrategia }}>
+                  <span>✅ Aceptar (Retener)</span>
+                </label>
+              </div>
               <input type="text" name="control" placeholder="Control ISO (Ej. A.5.1)" value="{{ r.control_iso }}"
                 required>
             </div>

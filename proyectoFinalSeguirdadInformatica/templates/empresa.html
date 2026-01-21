@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block header %}Mi Organización{% endblock %}
+{% block subheader %}Gestión de miembros y detalles de la empresa{% endblock %}
+
+{% block content %}
+<div class="grid-2">
+    <!-- Información de la Empresa -->
+    <div class="card">
+        <h3>Detalles de la Organización</h3>
+        <p><strong>Nombre:</strong> {{ empresa.nombre }}</p>
+        <p><strong>ID de Empresa:</strong> <code
+                style="background: #eee; padding: 2px 5px; border-radius: 4px;">{{ empresa.id }}</code></p>
+        <p><strong>Fundador:</strong> {{ empresa.fundador }}</p>
+
+        <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
+            <p style="color: var(--text-muted); font-size: 0.9rem;">
+                Comparte el <strong>ID de Empresa</strong> con tus empleados para que puedan unirse a esta organización.
+            </p>
+        </div>
+    </div>
+
+    <!-- Estadísticas Rápidas -->
+    <div class="card">
+        <h3>Resumen de Miembros</h3>
+        <div class="grid-2" style="gap: 1rem; margin-top: 1rem;">
+            <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                <h4 style="margin:0; font-size: 2rem; color: var(--primary-color);">{{ miembros|length }}</h4>
+                <p style="margin:0; font-size: 0.8rem; color: var(--text-muted);">Total Miembros</p>
+            </div>
+            <div style="text-align: center; padding: 1rem; background: #f8fafc; border-radius: 8px;">
+                <h4 style="margin:0; font-size: 2rem; color: #10b981;">{{ miembros|selectattr('role', 'equalto',
+                    'empresario')|list|length }}</h4>
+                <p style="margin:0; font-size: 0.8rem; color: var(--text-muted);">Administradores</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 2rem;">
+    <h3>Lista de Miembros</h3>
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    {% if session.get('role') == 'empresario' %}
+                    <th>Acciones</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for miembro in miembros %}
+                <tr>
+                    <td>{{ miembro.name }}</td>
+                    <td>{{ miembro.username }}</td>
+                    <td>
+                        <span class="badge"
+                            style="background: {% if miembro.role == 'empresario' %}#3b82f6{% else %}#64748b{% endif %};">
+                            {{ miembro.role|capitalize }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge"
+                            style="background: {% if miembro.get('status', 'activo') == 'activo' %}#10b981{% else %}#f59e0b{% endif %};">
+                            {{ miembro.get('status', 'activo')|capitalize }}
+                        </span>
+                    </td>
+                    {% if session.get('role') == 'empresario' %}
+                    <td>
+                        {% if miembro.username != session.get('user_id') %}
+                        {% if miembro.get('status', 'activo') == 'pendiente' %}
+                        <form action="/empresa/miembros/aprobar" method="POST" style="display: inline;">
+                            <input type="hidden" name="username" value="{{ miembro.username }}">
+                            <button type="submit" class="btn-small" style="background: #10b981;">Aprobar</button>
+                        </form>
+                        {% endif %}
+                        <form action="/empresa/miembros/eliminar" method="POST" style="display: inline;"
+                            onsubmit="return confirm('¿Eliminar a este usuario?')">
+                            <input type="hidden" name="username" value="{{ miembro.username }}">
+                            <button type="submit" class="btn-small" style="background: #ef4444;">Eliminar</button>
+                        </form>
+                        {% else %}
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">(Tú)</span>
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
