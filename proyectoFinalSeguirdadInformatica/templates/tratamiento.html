@@ -70,8 +70,19 @@
                   <span>✅ Aceptar (Retener)</span>
                 </label>
               </div>
-              <input type="text" name="control" placeholder="Control ISO (Ej. A.5.1)" value="{{ r.control_iso }}"
+              <div style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem; color: var(--text-main);">
+                Controles ISO 27001 (Multiselección):</div>
+              <select name="control" multiple size="4" style="font-size: 0.8rem; border-radius: 4px; padding: 4px;"
                 required>
+                {% for ctrl in iso_controls %}
+                <option value="{{ ctrl.codigo }}" title="{{ ctrl.descripcion }}" {{ 'selected' if r.control_iso and
+                  ctrl.codigo in r.control_iso }}>
+                  {{ ctrl.codigo }} - {{ ctrl.nombre }}
+                </option>
+                {% endfor %}
+              </select>
+              <small style="color: var(--text-muted); font-size: 0.75rem;">Mantén Ctrl presionado para seleccionar
+                varios.</small>
             </div>
           </td>
 

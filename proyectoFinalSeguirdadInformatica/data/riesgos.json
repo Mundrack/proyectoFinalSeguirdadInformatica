@@ -11,7 +11,7 @@
     "fecha_identificacion": "2026-01-21",
     "fecha_tratamiento": "2026-01-21",
     "tratamiento_estrategia": "Mitigar",
-    "control_iso": "ISO 27005",
+    "control_iso": "A.6.3",
     "responsable": "Fector88",
     "probabilidad_residual": 2,
     "impacto_residual": 5,

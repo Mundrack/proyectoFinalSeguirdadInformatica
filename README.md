@@ -12,11 +12,12 @@
 - **Gestión Organizacional**:
   - Roles de **Empresario** (Administrador) y **Empleado**.
   - Sistema de aprobación de miembros para mayor seguridad.
+- **Cumplimiento ISO 27001:2022**:
+  - Catálogo nativo con más de 10 controles esenciales explicados con guías de uso.
+  - Sistema de multiselección en tratamiento para aplicar múltiples defensas.
+- **Entregables Integrados**:
+  - Generación de reportes CSV y documentación técnica (Respaldo técnico y Guía de video).
 - **Dashboard Dinámico**: Visualización en tiempo real de activos críticos, riesgos altos y cobertura de tratamiento.
-- **UX Avanzada**:
-  - Buscadores y filtros en tiempo real en todas las tablas clave.
-  - IDs automático y manual para un registro de activos más flexible.
-  - Exportación de resultados a CSV.
 
 ## 🛠️ Tecnologías Utilizadas
 
@@ -25,7 +26,12 @@
 - **Persistencia**: Archivos JSON (Estructura ligera e independiente)
 - **Seguridad**: Hashing de contraseñas con Werkzeug, Gestión de sesiones, Aislamiento por `empresa_id`.
 
-## 📦 Instalación y Uso
+## � Documentación y Entregables
+Para facilitar la entrega del proyecto final, se han incluido los siguientes documentos en la raíz:
+1. **[Documento_Respaldo_Tecnico.md](Documento_Respaldo_Tecnico.md)**: Explicación técnica, arquitectura Mermaid y conclusiones.
+2. **[Guia_Entregables_Finales.md](Guia_Entregables_Finales.md)**: Guía paso a paso para la grabación del video y checklist final.
+
+## �📦 Instalación y Uso
 
 1. Instalar dependencias:
    ```bash

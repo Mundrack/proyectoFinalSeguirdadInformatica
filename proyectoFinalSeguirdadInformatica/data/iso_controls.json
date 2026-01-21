@@ -1,0 +1,92 @@
+[
+    {
+        "id": "A.5",
+        "tema": "Controles Organizativos",
+        "controles": [
+            {
+                "codigo": "A.5.1",
+                "nombre": "Políticas para la seguridad de la información",
+                "descripcion": "Conjunto de directrices aprobadas por la dirección para orientar la seguridad.",
+                "cuando_usar": "Siempre, es la base de cualquier sistema de gestión."
+            },
+            {
+                "codigo": "A.5.10",
+                "nombre": "Aceptable uso de la información y otros activos asociados",
+                "descripcion": "Reglas para el uso correcto de equipos e información.",
+                "cuando_usar": "Cuando se entregan equipos a empleados o se da acceso a datos sensibles."
+            },
+            {
+                "codigo": "A.5.15",
+                "nombre": "Relaciones con proveedores",
+                "descripcion": "Seguridad en los procesos de adquisición y servicios externos.",
+                "cuando_usar": "Cuando se contratan servicios en la nube o soporte externo."
+            }
+        ]
+    },
+    {
+        "id": "A.6",
+        "tema": "Controles de Personas",
+        "controles": [
+            {
+                "codigo": "A.6.3",
+                "nombre": "Concienciación, formación y capacitación en seguridad",
+                "descripcion": "Programas de entrenamiento para empleados en ciberseguridad.",
+                "cuando_usar": "Cuando el riesgo humano es alto (phishing, errores de manejo)."
+            },
+            {
+                "codigo": "A.6.7",
+                "nombre": "Acuerdos de confidencialidad o no divulgación",
+                "descripcion": "Contratos legales para proteger el secreto de la información.",
+                "cuando_usar": "Con empleados nuevos y proveedores externos."
+            }
+        ]
+    },
+    {
+        "id": "A.7",
+        "tema": "Controles Físicos",
+        "controles": [
+            {
+                "codigo": "A.7.4",
+                "nombre": "Seguridad física y ambiental",
+                "descripcion": "Protección de las instalaciones contra acceso no autorizado o desastres.",
+                "cuando_usar": "Para proteger centros de datos, oficinas y servidores físicos."
+            },
+            {
+                "codigo": "A.7.10",
+                "nombre": "Almacenamiento de medios",
+                "descripcion": "Protección de discos duros, cintas o memorias físicas.",
+                "cuando_usar": "Cuando se manejan backups físicos o archivos de papel."
+            }
+        ]
+    },
+    {
+        "id": "A.8",
+        "tema": "Controles Tecnológicos",
+        "controles": [
+            {
+                "codigo": "A.8.1",
+                "nombre": "Dispositivos de los usuarios finales",
+                "descripcion": "Seguridad en laptops, móviles y estaciones de trabajo.",
+                "cuando_usar": "En teletrabajo o uso de portátiles corporativos."
+            },
+            {
+                "codigo": "A.8.11",
+                "nombre": "Seguridad de los servicios de red",
+                "descripcion": "Protección de la infraestructura de red (Firewalls, VPN).",
+                "cuando_usar": "Para mitigar ataques de red, intrusiones o accesos remotos."
+            },
+            {
+                "codigo": "A.8.24",
+                "nombre": "Uso de criptografía",
+                "descripcion": "Cifrado de datos en reposo y en tránsito.",
+                "cuando_usar": "Cuando se maneja información altamente confidencial."
+            },
+            {
+                "codigo": "A.8.5",
+                "nombre": "Gestión de vulnerabilidades técnicas",
+                "descripcion": "Detección y parcheo de fallos de seguridad en software.",
+                "cuando_usar": "Para prevenir exploits y ataques por software desactualizado."
+            }
+        ]
+    }
+]

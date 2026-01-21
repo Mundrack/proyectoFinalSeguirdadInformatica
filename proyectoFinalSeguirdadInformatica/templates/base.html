@@ -39,6 +39,7 @@
             <li><a href="/kpis" class="{{ 'active' if request.path == '/kpis' else '' }}">📈 KPIs & Simulación</a></li>
             <li><a href="/empresa" class="{{ 'active' if request.path == '/empresa' else '' }}">🏢 Mi Empresa</a></li>
             <li><a href="/reporte" class="{{ 'active' if request.path == '/reporte' else '' }}">📑 Reportes</a></li>
+            <li><a href="/catalogo" class="{{ 'active' if request.path == '/catalogo' else '' }}">📖 Catálogo ISO 27001</a></li>
 
             {% if session.get('user_id') %}
             <li style="margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">

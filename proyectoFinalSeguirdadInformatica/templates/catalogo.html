@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block header %}Catálogo de Controles ISO 27001:2022{% endblock %}
+{% block subheader %}Base de conocimientos para el tratamiento de riesgos de seguridad{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <p>La norma <strong>ISO/IEC 27001:2022</strong> proporciona un marco de trabajo para gestionar la seguridad de la
+        información. A continuación, se presenta un catálogo de los controles esenciales que puedes aplicar en este
+        sistema para mitigar los riesgos identificados.</p>
+</div>
+
+{% for grupo in iso_groups %}
+<div class="card" style="margin-bottom: 2rem;">
+    <h2
+        style="color: var(--accent-color); border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+        {{ grupo.tema }}
+    </h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        {% for ctrl in grupo.controles %}
+        <div style="padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #fafafa;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span class="badge badge-medium" style="font-weight: 700;">{{ ctrl.codigo }}</span>
+                <strong style="font-size: 1.1rem; color: var(--text-main);">{{ ctrl.nombre }}</strong>
+            </div>
+
+            <p style="font-size: 0.95rem; margin-bottom: 1rem; color: #475569;">
+                {{ ctrl.descripcion }}
+            </p>
+
+            <div
+                style="background: #f1f5f9; padding: 0.8rem; border-radius: 6px; border-left: 4px solid var(--accent-color);">
+                <small style="font-weight: 700; display: block; margin-bottom: 0.2rem; color: var(--accent-color);">
+                    💡 ¿CUÁNDO USAR?
+                </small>
+                <span style="font-size: 0.9rem; color: #1e293b;">{{ ctrl.cuando_usar }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+
+<div class="card" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
+    <h3 style="color: #166534; margin-bottom: 1rem;">💡 Tips de Implementación</h3>
+    <ul style="color: #166534; line-height: 1.6;">
+        <li><strong>Defensa en Profundidad:</strong> No confíes en un solo control. Combina controles organizativos
+            (políticas) con tecnológicos (firewalls/cifrado).</li>
+        <li><strong>Costo-Beneficio:</strong> Asegúrate de que el costo de implementar un control no sea mayor que el
+            impacto del riesgo que intenta mitigar.</li>
+        <li><strong>Monitoreo Continuo:</strong> Los controles deben ser revisados periódicamente para asegurar que
+            siguen siendo efectivos.</li>
+    </ul>
+</div>
+{% endblock %}

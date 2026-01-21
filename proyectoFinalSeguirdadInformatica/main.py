@@ -356,15 +356,26 @@ def tratamiento():
     mis_riesgos = [r for r in all_riesgos if r.get('empresa_id') == user_empresa]
     
     # Pass index of original list to allow editing
-    # Actually, we need to find the absolute index in all_riesgos for saving
     for r in mis_riesgos:
-        # Find index in all_riesgos
         for idx, orig in enumerate(all_riesgos):
             if orig == r:
                 r["id"] = idx
                 break
-                
-    return render_template("tratamiento.html", riesgos=mis_riesgos)
+
+    # Pass controls catalog for the multi-select
+    iso_controls_raw = load_json("data/iso_controls.json")
+    all_iso_controls = []
+    for group in iso_controls_raw:
+        for ctrl in group['controles']:
+            all_iso_controls.append(ctrl)
+
+    return render_template("tratamiento.html", riesgos=mis_riesgos, iso_controls=all_iso_controls)
+
+@app.route("/catalogo")
+@login_required
+def catalogo():
+    iso_controls = load_json("data/iso_controls.json")
+    return render_template("catalogo.html", iso_groups=iso_controls)
 
 @app.route("/tratamiento/guardar", methods=["POST"])
 @login_required
@@ -378,7 +389,10 @@ def guardar_tratamiento():
     estrategias_list = request.form.getlist("estrategia")
     estrategia = ", ".join(estrategias_list) if estrategias_list else "Sin estrategia"
     
-    control = request.form["control"]
+    # Get multiple ISO controls
+    controles_list = request.form.getlist("control")
+    control = ", ".join(controles_list) if controles_list else "Sin control específico"
+    
     responsable = request.form["responsable"]
     
     # Probability/Impact Residual might be same or lower
