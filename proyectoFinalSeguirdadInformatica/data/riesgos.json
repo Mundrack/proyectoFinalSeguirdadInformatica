@@ -64,5 +64,39 @@
     "impacto_residual": 0,
     "puntaje_residual": 0,
     "nivel_residual": ""
+  },
+  {
+    "activo": "Laptop Thais",
+    "amenaza": "MalwareTROYANO",
+    "vulnerabilidad": "Ataco la pc",
+    "controles_existentes": "no hay",
+    "probabilidad": 5,
+    "impacto": 5,
+    "puntaje": 25,
+    "nivel": "Muy Alto",
+    "tratamiento_estrategia": "Mitigar",
+    "control_iso": "ISO 27701",
+    "responsable": "Thais",
+    "probabilidad_residual": 3,
+    "impacto_residual": 2,
+    "puntaje_residual": 6,
+    "nivel_residual": "Bajo"
+  },
+  {
+    "activo": "Servidor BD",
+    "amenaza": "MalwareTROYANO",
+    "vulnerabilidad": "Uso de firewalls y sistemas de defensa no acyualizados",
+    "controles_existentes": "no existen ",
+    "probabilidad": 5,
+    "impacto": 5,
+    "puntaje": 25,
+    "nivel": "Muy Alto",
+    "tratamiento_estrategia": "",
+    "control_iso": "",
+    "responsable": "",
+    "probabilidad_residual": 0,
+    "impacto_residual": 0,
+    "puntaje_residual": 0,
+    "nivel_residual": ""
   }
 ]

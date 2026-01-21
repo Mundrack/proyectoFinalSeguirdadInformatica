@@ -23,5 +23,15 @@
     "nombre": "Laptod Mateo",
     "categoria": "Hardware",
     "criticidad": 9
+  },
+  {
+    "nombre": "Laptop Thais",
+    "categoria": "Hardware",
+    "criticidad": 8
+  },
+  {
+    "nombre": "aaaaa",
+    "categoria": "Hardware",
+    "criticidad": 9
   }
 ]

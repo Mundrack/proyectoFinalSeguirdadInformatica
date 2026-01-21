@@ -13,5 +13,10 @@
     "nombre": "malware mp1",
     "tipo": "Externa",
     "activo": "BD de Radical"
+  },
+  {
+    "nombre": "MalwareTROYANO",
+    "tipo": "Externa",
+    "activo": "Laptop Thais"
   }
 ]

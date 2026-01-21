@@ -3,5 +3,15 @@
     "username": "Mundrack",
     "password_hash": "scrypt:32768:8:1$IweS021c7x3N3ORD$a21bd37968efbe8eca17a66c1fc96cd7a0788f31e5ea7e06b22b7af8c1db30121527c736ce784a2f2c0b3ec3f987aa30c85a192e3c01b7a88265d9f9dcb7b106",
     "name": "Mateo Puga"
+  },
+  {
+    "username": "TR",
+    "password_hash": "scrypt:32768:8:1$gDQQO6dS8KB3Ois7$f6dfca07b3c674aa7f83913ad3f66a0571db44c599a18789cc0e6c915fe5f81a2091d16ff8fd8f7095b52850302421ea73237bf84cfb07c5cc06265012d5eab1",
+    "name": "Thais Rojas"
+  },
+  {
+    "username": "IsaacT",
+    "password_hash": "scrypt:32768:8:1$UbuB1p6HiEfhaMap$7a3b01e95f64f3b40b4f634f3036ff9357e1651ceeab45374c71816d29a27e7a8d21918d5e3a29e4f1b1399b949a8153f0e5ba1224d2d2a14b761505409a8908",
+    "name": "Isaac"
   }
 ]
