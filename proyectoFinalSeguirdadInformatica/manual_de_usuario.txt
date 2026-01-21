@@ -1,0 +1,115 @@
+MANUAL DE USUARIO - SECUREMANAGER SGSI
+=======================================
+
+Este manual proporciona las instrucciones para operar el sistema de Gestión de Seguridad de la Información (SGSI) alineado con la metodología MERC-PD.
+
+---
+
+1. REGISTRO E INICIO DE SESIÓN
+-------------------------------
+El sistema diferencia entre dos tipos de perfiles: el Empresario y el Empleado.
+
+PASOS:
+1. Acceda a la página de Registro.
+2. Complete sus datos personales (Nombre, Usuario y Contraseña).
+3. Seleccione su rol:
+   - Si es EMPRESARIO: Ingrese el nombre de su nueva organización.
+   - Si es EMPLEADO: Ingrese el ID de Empresa que le proporcionó su administrador.
+4. Haga clic en "Registrarse".
+
+[IMAGEN SUGERIDA: Captura de pantalla del formulario de registro con el selector de roles abierto]
+
+---
+
+2. GESTIÓN DE LA ORGANIZACIÓN (SOLO EMPRESARIO)
+-----------------------------------------------
+Como Empresario, usted es el responsable de activar a los nuevos miembros.
+
+PASOS:
+1. Al iniciar sesión, verá su "ID de Empresa" en el menú lateral.
+2. Vaya a la pestaña "Mi Empresa".
+3. En la sección "Lista de Miembros", verá a los usuarios con estado "Pendiente".
+4. Haga clic en el botón verde "Aprobar" para darles acceso total al sistema.
+5. También puede "Eliminar" usuarios si ya no pertenecen a la organización.
+
+[IMAGEN SUGERIDA: Vista de la pestaña "Mi Empresa" mostrando la lista de miembros y los botones de acción]
+
+---
+
+3. GESTIÓN DE ACTIVOS DE INFORMACIÓN
+-------------------------------------
+El primer paso técnico es registrar qué activos vamos a proteger.
+
+PASOS:
+1. Vaya a la pestaña "Activos".
+2. Complete el formulario con:
+   - Nombre del activo.
+   - Categoría (Hardware, Software, Humano, etc.).
+   - Valoración de Confidencialidad, Integridad y Disponibilidad (C-I-D) del 1 al 5.
+   - ID Manual (Referencia propia) y Responsable.
+3. El sistema calculará automáticamente la CRITICIDAD y generará un ID automático.
+4. Use el buscador superior para filtrar activos por nombre o criticidad.
+
+[IMAGEN SUGERIDA: Formulario de activos lleno y la tabla de activos debajo mostrando los colores de criticidad]
+
+---
+
+4. EVALUACIÓN DE RIESGOS (MERC-PD)
+-----------------------------------
+Aquí es donde se analiza qué puede salir mal con los activos registrados.
+
+PASOS:
+1. Vaya a la pestaña "Evaluar Riesgo".
+2. Seleccione el Activo y la Amenaza de las listas desplegables (puede usar el buscador interno para encontrarlos rápido).
+3. Califique la PROBABILIDAD (frecuencia) e IMPACTO del 1 al 5.
+4. El sistema calculará el NIVEL DE RIESGO (Bajo, Medio, Alto, Crítico) basándose en la matriz de mapa de calor.
+5. Verá el historial de evaluaciones filtrado por su empresa en la parte inferior.
+
+[IMAGEN SUGERIDA: Pantalla de Evaluación de Riesgo con los selectores buscables desplegados]
+
+---
+
+5. TRATAMIENTO DE RIESGOS
+--------------------------
+Define qué acciones se tomarán para reducir los riesgos evaluados.
+
+PASOS:
+1. Vaya a la pestaña "Tratamiento".
+2. Localice el riesgo y haga clic en "Tratar".
+3. Seleccione una o varias ESTRATEGIAS (Mitigar, Transferir, Evitar o Aceptar).
+4. Describa el CONTROL (ejemplo: ISO 27001 Annex A.8.1).
+5. Defina la Probabilidad e Impacto RESIDUAL (el riesgo que queda después del control).
+6. Guarde el tratamiento.
+
+[IMAGEN SUGERIDA: Modal o formulario de tratamiento de riesgos con las casillas de estrategias seleccionadas]
+
+---
+
+6. DASHBOARD Y KPIs MERC-PD
+---------------------------
+Visualice el estado general de la seguridad de su empresa.
+
+PASOS:
+1. Dashboard Principal: Vea el resumen de activos y riesgos altos de forma visual.
+2. Pestaña KPIs:
+   - KPI 1: % de Riesgos Críticos mitigados en menos de 30 días (Cálculo automático).
+   - KPI 2: Incidentes Reportados vs Prevenidos (Ingrese los números manualmente en el formulario inferior).
+   - KPI 3: Cobertura de Capacitación (Ingrese total de empleados y capacitados).
+3. Los gráficos se actualizarán al instante.
+
+[IMAGEN SUGERIDA: Panel de KPIs con las 3 tarjetas de colores y el gráfico de torta de distribución de riesgos]
+
+---
+
+7. EXPORTACIÓN Y REPORTES
+--------------------------
+Obtenga la documentación formal de su análisis.
+
+PASOS:
+1. Vaya a la pestaña "Reportes" para ver el Registro de Riesgos consolidado.
+2. Haga clic en "Descargar CSV" para obtener un archivo Excel que incluye todos los detalles, desde el riesgo inherente hasta el residual.
+
+[IMAGEN SUGERIDA: Tabla de reportes consolidada y el botón de descarga resaltado]
+
+---
+FIN DEL MANUAL DE USUARIO
