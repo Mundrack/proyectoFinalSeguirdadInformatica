@@ -1,1 +1,9 @@
-﻿[]
+[
+  {
+    "empresa_id": "754DBB56",
+    "incidentes_reportados": 4,
+    "incidentes_prevenidos": 3,
+    "total_empleados": 76,
+    "empleados_capacitados": 4
+  }
+]

@@ -10,5 +10,17 @@
     "criticidad": 15,
     "responsable": "Fector88",
     "empresa_id": "754DBB56"
+  },
+  {
+    "id_auto": 2,
+    "id_manual": "isma12",
+    "nombre": "aaa",
+    "categoria": "Datos",
+    "confidencialidad": 3,
+    "integridad": 3,
+    "disponibilidad": 3,
+    "criticidad": 9,
+    "responsable": "mateo",
+    "empresa_id": "754DBB56"
   }
 ]

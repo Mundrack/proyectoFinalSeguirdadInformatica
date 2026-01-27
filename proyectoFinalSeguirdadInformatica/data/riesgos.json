@@ -18,5 +18,25 @@
     "puntaje_residual": 10,
     "nivel_residual": "Alto",
     "empresa_id": "754DBB56"
+  },
+  {
+    "activo": "aaa",
+    "amenaza": "TROYANO",
+    "vulnerabilidad": "asdads",
+    "controles_existentes": "asfas",
+    "probabilidad": 4,
+    "impacto": 2,
+    "puntaje": 8,
+    "nivel": "Medio",
+    "fecha_identificacion": "2026-01-27",
+    "fecha_tratamiento": "2026-01-27",
+    "tratamiento_estrategia": "Mitigar",
+    "control_iso": "A.5.10",
+    "responsable": "Fector88",
+    "probabilidad_residual": 2,
+    "impacto_residual": 2,
+    "puntaje_residual": 4,
+    "nivel_residual": "Bajo",
+    "empresa_id": "754DBB56"
   }
 ]
