@@ -452,26 +452,73 @@ def guardar_tratamiento():
 def exportar_csv():
     user_empresa = session.get('empresa_id', 'GLOBAL')
     filename = f"riesgos_{user_empresa}.csv"
-    all_riesgos = load_json("data/riesgos.json")
-    mis_riesgos_data = [r for r in all_riesgos if r.get('empresa_id') == user_empresa]
     
-    # Convert to objects for easy access
+    # Cargar datos
+    all_riesgos = load_json("data/riesgos.json")
+    all_activos = load_json("data/risk_register.json")
+    all_amenazas = load_json("data/threats.json")
+
+    # Filtrar por empresa
+    mis_riesgos_data = [r for r in all_riesgos if r.get('empresa_id') == user_empresa]
+    mis_activos = [a for a in all_activos if a.get('empresa_id') == user_empresa]
+    mis_amenazas = [t for t in all_amenazas if t.get('empresa_id') == user_empresa]
+
+    # Crear diccionarios de búsqueda rápida
+    # Activos por nombre. Nota: Si hay nombres duplicados, se tomará el último. 
+    # Idealmente usar IDs, pero el modelo de Riesgo usa nombre de activo como FK.
+    activos_map = {a['nombre']: a for a in mis_activos}
+    
+    # Amenazas por nombre y activo
+    amenazas_map = {(t['nombre'], t['activo']): t for t in mis_amenazas}
+
+    # Convertir a objetos riesgo
     riesgos = [Riesgo.from_dict(r) for r in mis_riesgos_data]
 
     with open(filename, "w", newline="", encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(["Activo", "Amenaza", "Vulnerabilidad", "Nivel Inherente", "Estrategia", "Control ISO", "Nivel Residual", "Responsable"])
+        
+        # Nuevos encabezados ordenados y completos
+        headers = [
+            "ID Automático", "ID Personalizado", "Activo", "Categoría Activo", "Responsable Activo",
+            "Amenaza", "Tipo Amenaza", 
+            "Vulnerabilidad", "Controles Existentes", "Fecha Identificación",
+            "Probabilidad (Inherente)", "Impacto (Inherente)", "Puntaje (Inherente)", "Nivel (Inherente)",
+            "Estrategia Tratamiento", "Control ISO", "Responsable Tratamiento", "Fecha Tratamiento",
+            "Probabilidad (Residual)", "Impacto (Residual)", "Puntaje (Residual)", "Nivel (Residual)"
+        ]
+        writer.writerow(headers)
+
         for r in riesgos:
-            writer.writerow([
-                r.activo, 
-                r.amenaza, 
-                r.vulnerabilidad, 
-                r.nivel, 
-                r.tratamiento_estrategia, 
-                r.control_iso, 
-                r.nivel_residual,
-                r.responsable
-            ])
+            # Buscar info del activo
+            activo_info = activos_map.get(r.activo, {})
+            # Buscar info de la amenaza
+            amenaza_info = amenazas_map.get((r.amenaza, r.activo), {})
+
+            row = [
+                activo_info.get('id_auto', ''),
+                activo_info.get('id_manual', ''),
+                r.activo,
+                activo_info.get('categoria', ''),
+                activo_info.get('responsable', ''),
+                r.amenaza,
+                amenaza_info.get('tipo', ''),
+                r.vulnerabilidad,
+                r.controles_existentes,
+                r.fecha_identificacion,
+                r.probabilidad,
+                r.impacto,
+                r.puntaje,
+                r.nivel,
+                r.tratamiento_estrategia,
+                r.control_iso,
+                r.responsable,
+                r.fecha_tratamiento,
+                r.probabilidad_residual,
+                r.impacto_residual,
+                r.puntaje_residual,
+                r.nivel_residual
+            ]
+            writer.writerow(row)
 
     return send_file(filename, as_attachment=True)
 

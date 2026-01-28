@@ -1,3 +1,3 @@
-Activo,Amenaza,Vulnerabilidad,Nivel Inherente,Estrategia,Control ISO,Nivel Residual,Responsable
-BD RADICAL,TROYANO,Se infiltraron pareciendo un archivo de funtes confiables,Crítico,Mitigar,A.6.3,Alto,Fector88
-aaa,TROYANO,asdads,Medio,Mitigar,A.5.10,Bajo,Fector88
+ID Automático,ID Personalizado,Activo,Categoría Activo,Responsable Activo,Amenaza,Tipo Amenaza,Vulnerabilidad,Controles Existentes,Fecha Identificación,Probabilidad (Inherente),Impacto (Inherente),Puntaje (Inherente),Nivel (Inherente),Estrategia Tratamiento,Control ISO,Responsable Tratamiento,Fecha Tratamiento,Probabilidad (Residual),Impacto (Residual),Puntaje (Residual),Nivel (Residual)
+1,BD1,BD RADICAL,Datos,Fector88,TROYANO,Cibercrimen,Se infiltraron pareciendo un archivo de funtes confiables,No existen balidaciones si se supone que son de fuenten confiables,2026-01-21,5,5,25,Crítico,Mitigar,A.6.3,Fector88,2026-01-21,2,5,10,Alto
+2,isma12,aaa,Datos,mateo,TROYANO,,asdads,asfas,2026-01-27,4,2,8,Medio,Mitigar,A.5.10,Fector88,2026-01-27,2,2,4,Bajo
