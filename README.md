@@ -30,6 +30,7 @@
 Para facilitar la entrega del proyecto final, se han incluido los siguientes documentos en la raíz:
 1. **[Documento_Respaldo_Tecnico.md](Documento_Respaldo_Tecnico.md)**: Explicación técnica, arquitectura Mermaid y conclusiones.
 2. **[Guia_Entregables_Finales.md](Guia_Entregables_Finales.md)**: Guía paso a paso para la grabación del video y checklist final.
+3. **[Video Demo](https://www.youtube.com/watch?v=IhzFjGdLWWw)**: Demostración completa de la funcionalidad del sistema.
 
 ## �📦 Instalación y Uso
 
