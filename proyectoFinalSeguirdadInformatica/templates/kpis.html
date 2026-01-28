@@ -5,144 +5,231 @@
 
 {% block content %}
 
+<!-- Estilos para Glassmorphism y mejoras visuales -->
+<style>
+  .kpi-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    color: white;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .chart-container {
+    position: relative;
+    height: 120px;
+    width: 120px;
+  }
+
+  .kpi-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1;
+  }
+
+  .kpi-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-top: 0.5rem;
+  }
+
+  .kpi-footer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+</style>
+
 <!-- KPIs MERC-PD - Tarjetas Principales -->
 <div class="grid-3">
   <!-- KPI 1: Riesgos Críticos < 30 días -->
-  <div class="card"
-    style="background: linear-gradient(135deg, 
-    {% if kpi1.estado == 'excelente' %}#10b981, #34d399{% elif kpi1.estado == 'bueno' %}#3b82f6, #60a5fa{% elif kpi1.estado == 'regular' %}#f59e0b, #fbbf24{% else %}#ef4444, #f87171{% endif %}); color: white;">
-    <h3 style="font-size: 2.5rem; margin: 0; color: white;">{{ kpi1.porcentaje }}%</h3>
-    <p style="margin: 0.5rem 0; opacity: 0.9; font-size: 0.9rem;">KPI 1: Riesgos Críticos < 30 días</p>
-        <div
-          style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.3); font-size: 0.85rem;">
-          {{ kpi1.mitigados_30_dias }}/{{ kpi1.total_criticos }} riesgos críticos mitigados
-        </div>
+  <div class="kpi-card"
+    style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(52, 211, 153, 0.1)); border-color: rgba(16, 185, 129, 0.3);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div>
+        <h3 class="kpi-value" style="color: #34d399;">{{ kpi1.porcentaje }}%</h3>
+        <p class="kpi-label">Riesgos Críticos Mitigados<br>(< 30 días)</p>
+      </div>
+      <div class="chart-container">
+        <canvas id="kpi1Chart"></canvas>
+      </div>
+    </div>
+    <div class="kpi-footer">
+      <span>🛡️ {{ kpi1.mitigados_30_dias }} de {{ kpi1.total_criticos }} resueltos a tiempo</span>
+    </div>
   </div>
 
   <!-- KPI 2: Incidentes Reportados vs Prevenidos -->
-  <div class="card" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa); color: white;">
-    <h3 style="font-size: 2rem; margin: 0; color: white;">{{ kpi2.reportados }} | {{ kpi2.prevenidos }}</h3>
-    <p style="margin: 0.5rem 0; opacity: 0.9; font-size: 0.9rem;">KPI 2: Incidentes Reportados vs Prevenidos</p>
-    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.3); font-size: 0.85rem;">
-      Ratio: {{ kpi2.ratio }} prevenidos por cada reportado
+  <div class="kpi-card"
+    style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(167, 139, 250, 0.1)); border-color: rgba(139, 92, 246, 0.3);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div>
+        <h3 class="kpi-value" style="color: #a78bfa;">{{ kpi2.ratio }}</h3>
+        <p class="kpi-label">Ratio de Prevención<br>(Prevenidos / Reportados)</p>
+      </div>
+      <div class="chart-container" style="width: 140px;">
+        <canvas id="kpi2Chart"></canvas>
+      </div>
+    </div>
+    <div class="kpi-footer">
+      <span>🚨 {{ kpi2.prevenidos }} prevenidos vs {{ kpi2.reportados }} reportados</span>
     </div>
   </div>
 
   <!-- KPI 3: Cobertura de Capacitación -->
-  <div class="card"
-    style="background: linear-gradient(135deg, 
-    {% if kpi3.estado == 'excelente' %}#10b981, #34d399{% elif kpi3.estado == 'bueno' %}#3b82f6, #60a5fa{% elif kpi3.estado == 'regular' %}#f59e0b, #fbbf24{% else %}#ef4444, #f87171{% endif %}); color: white;">
-    <h3 style="font-size: 2.5rem; margin: 0; color: white;">{{ kpi3.porcentaje }}%</h3>
-    <p style="margin: 0.5rem 0; opacity: 0.9; font-size: 0.9rem;">KPI 3: Cobertura de Capacitación</p>
-    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.3); font-size: 0.85rem;">
-      {{ kpi3.capacitados }}/{{ kpi3.total_empleados }} empleados capacitados
+  <div class="kpi-card"
+    style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(96, 165, 250, 0.1)); border-color: rgba(59, 130, 246, 0.3);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div>
+        <h3 class="kpi-value" style="color: #60a5fa;">{{ kpi3.porcentaje }}%</h3>
+        <p class="kpi-label">Cobertura de<br>Capacitación</p>
+      </div>
+      <div class="chart-container">
+        <canvas id="kpi3Chart"></canvas>
+      </div>
+    </div>
+    <div class="kpi-footer">
+      <span>🎓 {{ kpi3.capacitados }} de {{ kpi3.total_empleados }} empleados formados</span>
     </div>
   </div>
 </div>
 
-<!-- Formularios de Datos Manuales -->
-<div class="grid-3" style="grid-template-columns: 1fr 1fr; margin-top: 1.5rem;">
-  <!-- Formulario de Incidentes -->
-  <div class="card">
-    <h2>📊 Registro de Incidentes (Este Mes)</h2>
-    <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">
-      Ingrese los datos de incidentes de seguridad para calcular el KPI 2
-    </p>
-    <form action="/kpis/incidentes" method="POST">
-      <div class="form-group">
-        <label>Incidentes Reportados</label>
-        <input type="number" name="incidentes_reportados" min="0" value="{{ kpi2.reportados }}" required>
-        <small style="color: var(--text-muted);">Incidentes de seguridad detectados y reportados</small>
-      </div>
-
-      <div class="form-group">
-        <label>Incidentes Prevenidos</label>
-        <input type="number" name="incidentes_prevenidos" min="0" value="{{ kpi2.prevenidos }}" required>
-        <small style="color: var(--text-muted);">Incidentes bloqueados por controles de seguridad</small>
-      </div>
-
-      <button type="submit" style="width: 100%;">💾 Guardar Datos de Incidentes</button>
-    </form>
-  </div>
-
-  <!-- Formulario de Capacitación -->
-  <div class="card">
-    <h2>👥 Gestión de Capacitación</h2>
-    <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">
-      Ingrese los datos de capacitación en protección de datos para calcular el KPI 3
-    </p>
-    <form action="/kpis/capacitacion" method="POST">
-      <div class="form-group">
-        <label>Total de Empleados</label>
-        <input type="number" name="total_empleados" min="0" value="{{ kpi3.total_empleados }}" required>
-        <small style="color: var(--text-muted);">Número total de empleados en la organización</small>
-      </div>
-
-      <div class="form-group">
-        <label>Empleados Capacitados</label>
-        <input type="number" name="empleados_capacitados" min="0" value="{{ kpi3.capacitados }}" required>
-        <small style="color: var(--text-muted);">Empleados que completaron capacitación en protección de datos</small>
-      </div>
-
-      <button type="submit" style="width: 100%;">💾 Guardar Datos de Capacitación</button>
-    </form>
-  </div>
-</div>
-
 <!-- Visualización y Análisis -->
-<div class="grid-3" style="grid-template-columns: 2fr 1fr; margin-top: 1.5rem;">
+<div class="grid-2" style="margin-top: 2rem; grid-template-columns: 2fr 1fr;">
   <!-- Gráfico de Distribución de Riesgos -->
   <div class="card">
-    <h2>📈 Distribución de Riesgos por Nivel</h2>
-    <canvas id="riesgosChart"></canvas>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <h2 style="margin: 0; font-size: 1.2rem;">📈 Panorama de Riesgos</h2>
+      <select
+        style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 5px 10px; border-radius: 4px;">
+        <option>Este Mes</option>
+        <option>Último Trimestre</option>
+        <option>Año Actual</option>
+      </select>
+    </div>
+    <div style="height: 300px; width: 100%;">
+      <canvas id="riesgosChart"></canvas>
+    </div>
   </div>
 
   <!-- Información MERC-PD -->
-  <div class="card">
-    <h2>ℹ️ Sobre los KPIs</h2>
-    <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.9rem;">
-      Los KPIs mostrados están basados en la <strong>Metodología MERC-PD</strong> (Metodología de Evaluación de Riesgo
-      Cibernético y Protección de Datos).
-    </p>
-    <hr style="margin: 1.5rem 0; opacity: 0.2;">
-    <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">Indicadores Clave:</h3>
-    <ul style="padding-left: 1.5rem; color: var(--text-muted); line-height: 1.8; font-size: 0.85rem;">
-      <li><strong>KPI 1:</strong> % de riesgos críticos mitigados en menos de 30 días</li>
-      <li><strong>KPI 2:</strong> Número de incidentes de seguridad reportados vs. prevenidos</li>
-      <li><strong>KPI 3:</strong> Nivel de cobertura de capacitación en protección de datos</li>
-    </ul>
-    <hr style="margin: 1.5rem 0; opacity: 0.2;">
-    <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">Niveles de Estado:</h3>
-    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <div style="width: 12px; height: 12px; background: #10b981; border-radius: 50%;"></div>
-        <span style="font-size: 0.85rem;">Excelente (≥80%)</span>
+  <div class="card" style="background: rgba(30, 41, 59, 0.8);">
+    <h2 style="font-size: 1.2rem; margin-bottom: 1rem;">ℹ️ Metodología MERC-PD</h2>
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <div style="padding-left: 10px; border-left: 3px solid #34d399;">
+        <h4 style="margin: 0 0 5px 0; color: #34d399;">Eficiencia</h4>
+        <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Mide la velocidad de respuesta ante amenazas críticas.
+          Meta: < 30 días.</p>
       </div>
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 50%;"></div>
-        <span style="font-size: 0.85rem;">Bueno (60-79%)</span>
+      <div style="padding-left: 10px; border-left: 3px solid #a78bfa;">
+        <h4 style="margin: 0 0 5px 0; color: #a78bfa;">Resiliencia</h4>
+        <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Relación entre incidentes detectados y neutralizados
+          automáticamente.</p>
       </div>
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 50%;"></div>
-        <span style="font-size: 0.85rem;">Regular (40-59%)</span>
-      </div>
-      <div style="display: flex; align-items: center; gap: 0.5rem;">
-        <div style="width: 12px; height: 12px; background: #ef4444; border-radius: 50%;"></div>
-        <span style="font-size: 0.85rem;">Crítico (<40%)< /span>
+      <div style="padding-left: 10px; border-left: 3px solid #60a5fa;">
+        <h4 style="margin: 0 0 5px 0; color: #60a5fa;">Cultura</h4>
+        <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Nivel de preparación del personal mediante programas
+          de formación.</p>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  // Gráfico de Distribución de Riesgos
+  // Configuración Global de Chart.js
+  Chart.defaults.color = '#94a3b8';
+  Chart.defaults.font.family = "'Inter', sans-serif";
+
+  // --- KPI 1: Mitigación (Doughnut) ---
+  new Chart(document.getElementById('kpi1Chart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Mitigados', 'Pendientes'],
+      datasets: [{
+        data: [{{ kpi1.mitigados_30_dias }}, {{ kpi1.total_criticos }} - {{ kpi1.mitigados_30_dias }}],
+    backgroundColor: ['#34d399', 'rgba(52, 211, 153, 0.2)'],
+    borderWidth: 0,
+    hoverOffset: 4
+      }]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '75%',
+    plugins: { legend: { display: false }, tooltip: { enabled: false } }
+  }
+  });
+
+  // --- KPI 2: Incidentes (Bar) ---
+  new Chart(document.getElementById('kpi2Chart'), {
+    type: 'bar',
+    data: {
+      labels: ['Report.', 'Prev.'],
+      datasets: [{
+        label: 'Incidentes',
+        data: [{{ kpi2.reportados }}, {{ kpi2.prevenidos }}],
+    backgroundColor: ['rgba(167, 139, 250, 0.5)', '#a78bfa'],
+    borderRadius: 4,
+    barThickness: 20
+  }]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { display: true } },
+      y: { display: false, grid: { display: false } }
+    }
+  }
+  });
+
+  // --- KPI 3: Capacitación (Doughnut) ---
+  new Chart(document.getElementById('kpi3Chart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Capacitados', 'No Cap.'],
+      datasets: [{
+        data: [{{ kpi3.capacitados }}, {{ kpi3.total_empleados }} - {{ kpi3.capacitados }}],
+    backgroundColor: ['#60a5fa', 'rgba(96, 165, 250, 0.2)'],
+    borderWidth: 0,
+    hoverOffset: 4
+      }]
+    },
+    options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '75%',
+    plugins: { legend: { display: false }, tooltip: { enabled: false } }
+  }
+  });
+
+  // --- Gráfico Principal: Distribución de Riesgos ---
   const ctx = document.getElementById('riesgosChart').getContext('2d');
+
+  // Crear gradiente para las barras
+  const gradientHigh = ctx.createLinearGradient(0, 0, 0, 400);
+  gradientHigh.addColorStop(0, 'rgba(239, 68, 68, 0.8)');
+  gradientHigh.addColorStop(1, 'rgba(239, 68, 68, 0.1)');
+
   new Chart(ctx, {
     type: 'bar',
     data: {
       labels: ['Bajo', 'Medio', 'Alto', 'Crítico'],
       datasets: [{
-        label: 'Número de Riesgos',
+        label: 'Nivel de Riesgo',
         data: [
           {{ distribucion.Bajo }},
       {{ distribucion.Medio }},
@@ -150,33 +237,38 @@
     {{ distribucion['Crítico'] }}
         ],
     backgroundColor: [
-    'rgba(16, 185, 129, 0.6)',
-    'rgba(59, 130, 246, 0.6)',
-    'rgba(245, 158, 11, 0.6)',
-    'rgba(239, 68, 68, 0.6)'
+    'rgba(16, 185, 129, 0.8)', // Verde
+    'rgba(59, 130, 246, 0.8)', // Azul
+    'rgba(245, 158, 11, 0.8)', // Naranja
+    'rgba(239, 68, 68, 0.8)'   // Rojo
   ],
-    borderColor: [
-    'rgb(16, 185, 129)',
-    'rgb(59, 130, 246)',
-    'rgb(245, 158, 11)',
-    'rgb(239, 68, 68)'
-  ],
-    borderWidth: 2
+    borderRadius: 6,
+    borderWidth: 0,
+    barThickness: 40
       }]
     },
     options: {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      legend: {
-        display: false
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+        padding: 12,
+        cornerRadius: 8,
+        titleFont: { size: 14 },
+        bodyFont: { size: 13 }
       }
     },
     scales: {
       y: {
         beginAtZero: true,
-        ticks: {
-          stepSize: 1
-        }
+        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+        ticks: { color: '#94a3b8' }
+      },
+      x: {
+        grid: { display: false },
+        ticks: { color: '#94a3b8' }
       }
     }
   }

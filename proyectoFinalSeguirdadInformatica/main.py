@@ -209,6 +209,27 @@ def eliminar_miembro():
     flash(f'Usuario {username_to_delete} eliminado')
     return redirect(url_for('empresa'))
 
+@app.route('/empresa/miembros/capacitar', methods=['POST'])
+@login_required
+def capacitar_miembro():
+    if session.get('role') != 'empresario':
+        flash('No tienes permiso para esta acción')
+        # return redirect to dashboard or wherever appropriate
+        return redirect(url_for('empresa'))
+        
+    username_to_train = request.form.get('username')
+    action = request.form.get('action') # 'train' or 'untrain'
+    
+    users = load_json("data/users.json")
+    for u in users:
+        if u['username'] == username_to_train and u.get('empresa_id') == session.get('empresa_id'):
+            u['capacitado'] = (action == 'train')
+            break
+            
+    save_json("data/users.json", users)
+    flash(f'Estado de capacitación actualizado para {username_to_train}')
+    return redirect(url_for('empresa'))
+
 @app.route("/activos", methods=["GET", "POST"])
 @login_required
 def activos():

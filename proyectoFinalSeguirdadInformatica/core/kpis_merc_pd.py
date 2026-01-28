@@ -129,14 +129,15 @@ def obtener_datos_capacitacion(empresa_id="GLOBAL"):
     """
     Según MERC-PD: "Nivel de cobertura de capacitación en protección de datos"
     """
-    all_kpis = load_json("data/kpis.json")
-    if isinstance(all_kpis, list):
-        kpis = next((k for k in all_kpis if k.get('empresa_id') == empresa_id), {})
-    else:
-        kpis = {}
+    # Cargar usuarios reales
+    users = load_json("data/users.json")
     
-    total = kpis.get('total_empleados', 0)
-    capacitados = kpis.get('empleados_capacitados', 0)
+    # Filtrar empleados de la empresa
+    empleados = [u for u in users if u.get('empresa_id') == empresa_id]
+    total = len(empleados)
+    
+    # Contar capacitados (propiedad 'capacitado' == True)
+    capacitados = len([u for u in empleados if u.get('capacitado', False) is True])
     
     porcentaje = (capacitados / total) * 100 if total > 0 else 0
     
