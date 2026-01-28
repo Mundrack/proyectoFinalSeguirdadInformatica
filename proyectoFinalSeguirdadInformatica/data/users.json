@@ -13,7 +13,8 @@
     "name": "Fabian Puga",
     "role": "empleado",
     "empresa_id": "754DBB56",
-    "status": "activo"
+    "status": "activo",
+    "capacitado": true
   },
   {
     "username": "Camilu",
